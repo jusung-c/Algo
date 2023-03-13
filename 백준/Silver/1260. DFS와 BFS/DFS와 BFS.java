@@ -1,13 +1,11 @@
 import java.io.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
     static int N, M, V;
-    static int[][] adj;
+    static ArrayList<Integer>[] adj;
     static boolean[] visit;
 
     public static void init() throws IOException {
@@ -17,15 +15,18 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
         V = Integer.parseInt(st.nextToken());
 
-        adj = new int[N + 1][N + 1];
+        adj = new ArrayList[N + 1];
+        for (int i = 1; i <= N; i++) {
+            adj[i] = new ArrayList<Integer>();
+        }
         for (int i = 1; i <= M; i++) {
             st = new StringTokenizer(br.readLine(), " ");
             int x = Integer.parseInt(st.nextToken());
             int y = Integer.parseInt(st.nextToken());
 
             // 양방향 그래프이므로
-            adj[x][y] = 1;
-            adj[y][x] = 1;
+            adj[x].add(y);
+            adj[y].add(x);
         }
     }
 
@@ -35,13 +36,8 @@ public class Main {
         visit[x] = true;
         bw.write(x + " ");
 
-        for (int y = 1; y <= N; y++) {
-            // 이어진 간선이 없으면 건너뛰기
-            if (adj[x][y] == 0) continue;
-
-            // 방문했던 정점이면 건너뛰기
+        for (int y : adj[x]) {
             if (visit[y]) continue;
-
             dfs(y);
         }
     }
@@ -57,8 +53,7 @@ public class Main {
             x = que.poll();
             bw.write(x + " ");
 
-            for (int y = 1; y <= N; y++) {
-                if (adj[x][y] == 0) continue;
+            for (int y : adj[x]) {
                 if (visit[y]) continue;
 
                 que.add(y);
@@ -68,6 +63,11 @@ public class Main {
     }
 
     private static void pro() throws IOException {
+        // 모든 정점마다 정렬
+        for (int i = 1; i <= N; i++) {
+            Collections.sort(adj[i]);
+        }
+
         visit = new boolean[N + 1];
 
         dfs(V);
