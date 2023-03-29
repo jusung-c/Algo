@@ -18,7 +18,6 @@ public class Main {
         M = Integer.parseInt(br.readLine());
 
         dist = new int[N + 1];
-
         adj = new ArrayList[N + 1];
         for (int i = 1; i <= N; i++) {
             adj[i] = new ArrayList<>();
@@ -39,7 +38,7 @@ public class Main {
 
         int ans = 0;
         for (int i = 2; i <= N; i++) {
-            if (1 <= dist[i] && dist[i] <= 2) {
+            if (dist[i] > 0 && dist[i] <= 2) {
                 ans++;
             }
         }
@@ -48,9 +47,12 @@ public class Main {
     }
 
     private static void bfs(int a) {
-        for (int i=1; i<=N; i++) dist[i] = -1;
+        for (int i = 1; i <= N; i++) {
+            dist[i] = -1;
+        }
 
         Queue<Integer> Q = new LinkedList<>();
+
         Q.add(a);
         dist[a] = 0;
 
