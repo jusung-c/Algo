@@ -7,54 +7,57 @@ public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
     static int[] Limit;
-    static boolean[] possible;
     static boolean[][][] visit;
+    static boolean[] possible;
 
     static class State {
-        int[] X;
+        int X[];
 
-        public State(int[] nX) {
+        public State(int[] x) {
             X = new int[3];
+
             for (int i = 0; i < 3; i++) {
-                X[i] = nX[i];
+                X[i] = x[i];
             }
         }
 
+        // 물 붓기
         public State move(int from, int to, int[] Limit) {
-            State nX = new State(new int[]{X[0], X[1], X[2]});
+            int nX[] = new int[] {X[0], X[1], X[2]};
 
             if (X[from] + X[to] >= Limit[to]) {
-                nX.X[from] = X[from] - (Limit[to] - X[to]);
-                nX.X[to] = Limit[to];
+                nX[from] = X[from] + X[to] - Limit[to];
+                nX[to] = Limit[to];
             } else {
-                nX.X[from] = 0;
-                nX.X[to] = X[from] + X[to];
+                nX[from] = 0;
+                nX[to] = X[to] + X[from];
             }
 
-            return nX;
+            return new State(nX);
         }
     }
 
     public static void init() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        st = new StringTokenizer(br.readLine(), " ");
+        st = new StringTokenizer(br.readLine());
+
         Limit = new int[3];
-        possible = new boolean[202];
-        visit = new boolean[202][202][202];
 
         for (int i = 0; i < 3; i++) {
             Limit[i] = Integer.parseInt(st.nextToken());
         }
+
+        visit = new boolean[202][202][202];
+        possible = new boolean[202];
+
     }
 
     private static void pro() throws IOException {
         bfs(0, 0, Limit[2]);
 
-        for (int i = 0; i < possible.length; i++) {
-            if (possible[i]) {
-                bw.write(i + " ");
-            }
+        for (int i = 0; i <= Limit[2]; i++) {
+            if (possible[i]) bw.write(i + " ");
         }
     }
 
@@ -75,15 +78,15 @@ public class Main {
 
                     State ns = s.move(from, to, Limit);
 
-                    if (visit[ns.X[0]][ns.X[1]][ns.X[2]]) {
-                        continue;
-                    }
+                    if (visit[ns.X[0]][ns.X[1]][ns.X[2]]) continue;
 
                     visit[ns.X[0]][ns.X[1]][ns.X[2]] = true;
                     Q.add(ns);
                 }
             }
+
         }
+
 
     }
 
