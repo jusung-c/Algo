@@ -1,77 +1,86 @@
 import java.io.*;
-import java.util.*;
+import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
+    static StringTokenizer st;
+
     static int N;
     static int max = Integer.MIN_VALUE;
     static int min = Integer.MAX_VALUE;
-    static int[] nums, operators, order;
+    static int[] num, operator, selected;
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static final int M = 4;
+
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
+
         N = Integer.parseInt(br.readLine());
+        num = new int[N + 1];
+        operator = new int[M + 1];
+        selected = new int[N];
 
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
-        nums = new int[N + 1];
+        st = new StringTokenizer(br.readLine(), " ");
         for (int i = 1; i <= N; i++) {
-            nums[i] = Integer.parseInt(st.nextToken());
+            num[i] = Integer.parseInt(st.nextToken());
         }
 
         st = new StringTokenizer(br.readLine(), " ");
-        operators = new int[5];
-        for (int i = 1; i < 5; i++) {
-            operators[i] = Integer.parseInt(st.nextToken());
+        for (int i = 1; i <= M; i++) {
+            operator[i] = Integer.parseInt(st.nextToken());
         }
-
-        order = new int[N];
-
-        rec_func(1, nums[1]);
-
-        bw.write(max + "\n" + min);
-
-        br.close();
-        bw.close();
     }
 
-    static void rec_func(int k, int sum) throws IOException {
+    private static void pro(int k, int value) throws IOException {
         if (k == N) {
-            max = Math.max(max, sum);
-            min = Math.min(min, sum);
+            max = Math.max(max, value);
+            min = Math.min(min, value);
         } else {
-            for (int i = 1; i < 5; i++) {
-                if (operators[i] >= 1) {
-                    operators[i]--;
-                    order[k] = i;
+            for (int i = 1; i <= M; i++) {
+                if (operator[i] == 0) continue;
 
+                operator[i]--;
+                selected[k] = i;
 
-                    // 다음 연산자 뽑기
-                    rec_func(k + 1, calc(sum, i, nums[k + 1]));
+                pro(k + 1, calculate(value, i, num[k + 1]));
 
-                    // 초기화
-                    operators[i]++;
-                    order[k] = 0;
-                }
+                operator[i]++;
+                selected[k] = 0;
             }
         }
+
+
     }
 
-    static int calc(int sum, int i, int num) {
-        if (i == 1) {
-            sum += num;
+    private static int calculate(int value, int operator, int operand) {
+        if (operator == 1) {
+            return value += operand;
         }
-        if (i == 2) {
-            sum -= num;
+
+        if (operator == 2) {
+            return value -= operand;
         }
-        if (i == 3) {
-            sum *= num;
+
+        if (operator == 3) {
+            return value *= operand;
         }
-        if (i == 4) {
-            sum /= num;
+
+        if (operator == 4) {
+            return value /= operand;
         }
-        
-        return sum;
+
+        return value;
     }
 
+    public static void main(String[] args) throws Exception {
+        init();
+
+        pro(1, num[1]);
+
+        bw.write(max + "\n");
+        bw.write(min + "\n");
+
+        bw.close();
+    }
 }
-
