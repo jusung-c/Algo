@@ -1,99 +1,93 @@
-import java.io.*;
-import java.util.*;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.StringTokenizer;
+ 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static StringTokenizer st;
-    static int N, M;
-    static int min = Integer.MAX_VALUE;
-    static int[] start, visit;
-    static int[][] score;
-
-
-    public static void init() throws IOException {
-        // N은 짝수
-        N = Integer.parseInt(br.readLine());
-        M = N / 2;
-
-        start = new int[M + 1];
-        visit = new int[N + 1];
-
-        // 점수판
-        score = new int[N + 1][N + 1];
-        for (int i = 1; i <= N; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 1; j <= N; j++) {
-                score[i][j] = Integer.parseInt(st.nextToken());
-            }
-        }
-    }
-
-    private static void pro(int k, int prev) throws IOException {
-        if (k == M + 1) {
-            // start와 link의 점수를 계산
-            cal();
-
-        } else {
-            for (int i = prev + 1; i <= N; i++) {
-                if (visit[i] == 1) continue;
-
-                start[k] = i;
-                visit[i] = 1;
-
-                pro(k + 1, i);
-
-                start[k] = 0;
-                visit[i] = 0;
-            }
-        }
-
-
-    }
-
-    private static void cal() throws IOException {
-        int[] link = new int[M + 1];
-        int index = 1;
-        for (int i = 1; i <= N; i++) {
-            if (visit[i] == 0) {
-                link[index] = i;
-                index++;
-            }
-        }
-
-        int start_score = 0;
-        int link_score = 0;
-
-        for (int i = 1; i <= M; i++) {
-            for (int j = i + 1; j <= M; j++) {
-                int s_1 = start[i];
-                int s_2 = start[j];
-                int l_1 = link[i];
-                int l_2 = link[j];
-
-                start_score += score[s_1][s_2];
-                start_score += score[s_2][s_1];
-
-                link_score += score[l_1][l_2];
-                link_score += score[l_2][l_1];
-            }
-        }
-
-//        bw.write(+start_score +  "****" + link_score + "\n");
-
-
-        min = Math.min(min, Math.abs(start_score - link_score));
-
-    }
-
-    public static void main(String[] args) throws Exception {
-        init();
-
-        pro(1, 0);
-
-        bw.write(min + " ");
-
-        br.close();
-        bw.close();
-    }
+	
+	static int N;
+	static int[][] map;
+	static boolean[] visit;
+	
+	static int Min = Integer.MAX_VALUE;
+	
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+ 
+		N = Integer.parseInt(br.readLine());
+ 
+		map = new int[N][N];
+		visit = new boolean[N];
+ 
+ 
+		for (int i = 0; i < N; i++) {
+			StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+ 
+			for (int j = 0; j < N; j++) {
+				map[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
+ 
+		combi(0, 0);
+		System.out.println(Min);
+ 
+	}
+ 
+	// idx는 인덱스, count는 조합 개수(=재귀 깊이)
+	static void combi(int idx, int count) {
+		// 팀 조합이 완성될 경우
+		if(count == N / 2) {
+			/*
+			 방문한 팀과 방문하지 않은 팀을 각각 나누어
+			 각 팀의 점수를 구한 뒤 최솟값을 찾는다.
+			*/
+			diff();
+			return;
+		}
+ 
+		for(int i = idx; i < N; i++) {
+			// 방문하지 않았다면?
+			if(!visit[i]) {
+				visit[i] = true;	// 방문으로 변경
+				combi(i + 1, count + 1);	// 재귀 호출
+				visit[i] = false;	// 재귀가 끝나면 비방문으로 변경
+			}
+		}
+	}
+ 
+	// 두 팀의 능력치 차이를 계산하는 함수 
+	static void diff() {
+		int team_start = 0;
+		int team_link = 0;
+ 
+		for (int i = 0; i < N - 1; i++) {
+			for (int j = i + 1; j < N; j++) {
+				// i 번째 사람과 j 번째 사람이 true라면 스타트팀으로 점수 플러스 
+				if (visit[i] == true && visit[j] == true) {
+					team_start += map[i][j];
+					team_start += map[j][i];
+				}
+				// i 번째 사람과 j 번째 사람이 false라면 링크팀으로 점수 플러스 
+				else if (visit[i] == false && visit[j] == false) {
+					team_link += map[i][j];
+					team_link += map[j][i];
+				}
+			}
+		}
+		// 두 팀의 점수 차이 (절댓값)
+		int val = Math.abs(team_start - team_link);
+		
+		/*
+		  두 팀의 점수차가 0이라면 가장 낮은 최솟값이기 때문에
+		  더이상의 탐색 필요없이 0을 출력하고 종료하면 된다.
+		 */
+		if (val == 0) {
+			System.out.println(val);
+			System.exit(0);
+		}
+		
+		Min = Math.min(val, Min);
+				
+	}
+ 
 }
