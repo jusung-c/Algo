@@ -2,83 +2,73 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
+/*
+    0. 문제
+
+    1. 아이디어
+
+    2. 시간 복잡도
+
+ */
+
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
     static StringTokenizer st;
     static int N, M;
     static int[] arr;
 
     public static void init() throws IOException {
-        N = Integer.parseInt(br.readLine());
+        br = new BufferedReader(new InputStreamReader(System.in));
 
+        N = Integer.parseInt(br.readLine());
         arr = new int[N + 1];
+
         st = new StringTokenizer(br.readLine(), " ");
         for (int i = 1; i <= N; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        M = Integer.parseInt(br.readLine());
-
-        st = new StringTokenizer(br.readLine(), " ");
-
-        // 카드 오름차순 정렬
         Arrays.sort(arr, 1, N + 1);
 
+        M = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine(), " ");
         for (int i = 1; i <= M; i++) {
-            int val = Integer.parseInt(st.nextToken());
-            // target 미만의 수 중 가장 큰 수의 인덱스 구하기
-            int small = S_Search(1, N, val);
+            int n = Integer.parseInt(st.nextToken());
 
+            int left = left(1, N, n);
+            int right = right(1, N, n);
 
-            // target 초과의 수 중 가장 작 수의 인덱스 구하기
-            int big = B_Search(1, N, val);
-
-            bw.write(big - small - 1 + " ");
+            bw.write(right - left - 1 + " ");
         }
 
     }
 
-    private static int B_Search(int start, int end, int target) {
-        int result = end + 1;
-
+    private static int right(int start, int end, int target) {
         while (start <= end) {
             int mid = (start + end) / 2;
 
-            if (arr[mid] == target) {
-                start = mid + 1;
-            } else if (arr[mid] < target) {
-                start = mid + 1;
-            } else if (arr[mid] > target) {
-                result = mid;
-                end = mid - 1;
-            }
+            if (arr[mid] == target) start = mid + 1;
+            else if (arr[mid] < target) start = mid + 1;
+            else end = mid -1;
         }
 
-        return result;
+        return start;
     }
 
-    private static int S_Search(int start, int end, int target) {
-        int result = start - 1;
-
+    private static int left(int start, int end, int target) {
         while (start <= end) {
             int mid = (start + end) / 2;
 
-            if (arr[mid] == target) {
-                end = mid - 1;
-            } else if (arr[mid] > target) {
-                end = mid - 1;
-            } else if (arr[mid] < target) {
-                result = mid;
-                start = mid + 1;
-            }
+            if (arr[mid] == target) end = mid - 1;
+            else if (arr[mid] > target) end = mid -1;
+            else start = mid + 1;
         }
 
-        return result;
+        return end;
     }
 
-    private static void pro() {
-
+    private static void pro() throws IOException {
 
 
     }
@@ -88,7 +78,7 @@ public class Main {
 
         pro();
 
-        br.close();
         bw.close();
     }
 }
+
