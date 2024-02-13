@@ -3,53 +3,52 @@ import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
+    static StringTokenizer st;
     static int N;
     static long K;
 
-    static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+        st = new StringTokenizer(br.readLine(), " ");
+
         N = Integer.parseInt(st.nextToken());
         K = Long.parseLong(st.nextToken());
-
     }
 
-    static void pro() throws IOException {
-        int L = 0;
-        int R = N / 2;
+    private static void pro() throws IOException {
+        int start = 0;
+        int end = N / 2;
 
-        while (L <= R) {
-            int mid = (L + R) / 2;
+        while (start <= end) {
+            int mid = (start + end) / 2;
 
-            if (paper(mid) > K) {
-                R = mid - 1;
-            } else if(paper(mid) < K){
-                L = mid + 1;
-                
-            // 찾은 경우    
-            } else if(paper(mid) == K){
-                bw.write("YES"+" ");
+            if (paper(mid) == K) {
+                bw.write("YES");
                 return;
+            } else if (paper(mid) > K) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
             }
         }
 
-        bw.write("NO"+" ");
+        bw.write("NO");
+
     }
 
-    static long paper(long mid) {
-        long row = mid;
-        long col = N - row;
-
-        return (row + 1) * (col + 1);
+    private static long paper(int value) {
+        long a = value;
+        long b = N - value;
+        return (a + 1) * (b + 1);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         init();
 
         pro();
 
         bw.close();
     }
-
 }
