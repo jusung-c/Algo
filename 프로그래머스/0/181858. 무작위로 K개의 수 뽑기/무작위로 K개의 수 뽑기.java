@@ -8,8 +8,7 @@ class Solution {
         
         int set[] = Arrays.stream(arr).distinct().toArray();
         
-        if (set.length == k) return set;
-        else if (set.length > k) {
+        if (set.length >= k) {
             for(int i=0; i<k; i++) {
                 answer[i] = set[i];
             }
