@@ -2,16 +2,10 @@ import java.util.*;
 
 class Solution {
     public int[] solution(int[] arr) {
-        int n = 0;
+        int n = 1;
         
-        for (int i=0; i<11; i++) {
-            int k = (int) Math.pow(2, i);
-            if (k == arr.length) return arr;
-            
-            if (k > arr.length) {
-                n = (int) Math.pow(2, i);
-                break;
-            }
+        while (n < arr.length) {
+            n *= 2;
         }
         
         int answer[] = new int[n];
