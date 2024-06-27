@@ -4,7 +4,7 @@ import java.util.stream.*;
 class Solution {
     public int solution(String number) {
         int sum = number.chars()
-            .map(Character::getNumericValue)
+            .map(i -> i - '0')
             .sum();
         
         return sum % 9;
