@@ -13,8 +13,6 @@ class Solution {
                 return IntStream.rangeClosed(slicer[0], slicer[1]).map(i -> num_list[i]).toArray();
                 
             case 4:
-                if (slicer[2] == 1) 
-                    return IntStream.rangeClosed(slicer[0], slicer[1]).map(i -> num_list[i]).toArray();
                 return IntStream.rangeClosed(slicer[0], slicer[1])
                     .filter(i -> (i - slicer[0]) % slicer[2] == 0)
                     .map(i -> num_list[i])
