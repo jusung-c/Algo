@@ -3,14 +3,12 @@ import java.util.stream.*;
 
 class Solution {
     public int[] solution(int[] arr) {
-        ArrayList<Integer> twos = new ArrayList<>();
-        
-        IntStream.range(0, arr.length)        
+        int twos[] = IntStream.range(0, arr.length)        
             .filter(i -> arr[i] == 2)
-            .forEach(i -> twos.add(i));
+            .toArray();
         
-        if (twos.isEmpty()) return new int[]{-1};
+        if (twos.length == 0) return new int[]{-1};
 
-        return Arrays.copyOfRange(arr, twos.get(0), twos.get(twos.size()-1) + 1);
+        return Arrays.copyOfRange(arr, twos[0], twos[twos.length-1] + 1);
     }
 }
