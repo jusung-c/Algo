@@ -11,9 +11,7 @@ class Solution {
                 break;
             }
             
-            answer.add(IntStream.range(i, i+n)
-                .mapToObj(num -> String.valueOf((char)my_str.charAt(num)))
-                .collect(Collectors.joining()));
+            answer.add(my_str.substring(i, i+n));
         }
         
         return answer.stream().toArray(String[]::new);
