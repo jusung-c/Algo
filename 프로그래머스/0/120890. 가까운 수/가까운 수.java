@@ -9,7 +9,7 @@ class Solution {
         
         Arrays.sort(array);
         
-        for (int i=0; i<array.length; i++) {
+        for (int i=1; i<array.length; i++) {
             if (array[i] == n) return array[i];
             
             if (array[i] > n) {
@@ -17,8 +17,6 @@ class Solution {
                 break;
             }
         }
-        
-        if (answer == 0) answer = 1;
         
         int a = Math.abs(n - array[answer]);
         int b = Math.abs(n - array[answer-1]);
