@@ -4,26 +4,21 @@ class Solution {
     public int solution(int[] array) {
         int answer = 0;
         int max = 0;
-        Arrays.sort(array);
         
         Map<Integer, Integer> map = new HashMap<>();
-        map.put(array[0], 1);
         
-        for(int i=1; i<array.length; i++) {
-            if (array[i] == array[i-1]) {
-                map.put(array[i], map.get(array[i])+1);
-            } else {
-                map.put(array[i], 1);
-            }
-        }
-        
-        for(Map.Entry<Integer, Integer> e : map.entrySet()) {
-            if (max < e.getValue()) {
-                max = e.getValue();
-                answer = e.getKey();
-            } else if (max == e.getValue()) {
+        for (int i : array) {
+            int cnt = map.getOrDefault(i, 0) + 1;
+            
+            if (cnt > max) {
+                max = cnt;
+                answer = i;
+            } else if (cnt == max) {
+                max = cnt;
                 answer = -1;
             }
+            
+            map.put(i, cnt);
         }
         
         return answer;
