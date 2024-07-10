@@ -1,46 +1,43 @@
 import java.util.*;
 
 class Solution {
+    private static final int[] dx = {0, 1, -1};
+    private static final int[] dy = {1, 0, -1};
+    
     public int[] solution(int n) {
         ArrayList<Integer> answer = new ArrayList<>();
         int[][] map = new int[n][n];
+        int v = 1;
         int y = 0;
         int x = 0;
-        int v = 1;
+        int d = 0;
         
         // 1. 방향 순서대로 진행하면서 칸 채우기
         while (true) {
-            // 아래로 이동
-            while (true) {
-                map[y][x] = v++;
-                
-                if (y+1 >= n || map[y+1][x] != 0) break;
-                y++;
-            }
-            if (x+1 >= n || map[y][x+1] != 0) break;
-            x++;
+            map[y][x] = v++;
             
-            // 오른쪽으로 이동
-            while (true) {
-                map[y][x] = v++;
-                
-                if (x+1 >= n || map[y][x+1] != 0) break;
-                x++;
-            }
-            if (map[y-1][x-1] != 0) break;
-            x--;
-            y--;
+            int nx = x + dx[d];
+            int ny = y + dy[d];
             
-            // 왼쪽 대각선 위로 이동
-            while (true) {
-                map[y][x] = v++;
+            // 범위 및 방문 체크
+            if (nx == n || nx == -1 || ny == n | ny == -1 ||
+               map[ny][nx] != 0) {
                 
-                if (map[y-1][x-1] != 0) break;
-                x--;
-                y--;
+                d = (d+1) % 3;
+                nx = x + dx[d];
+                ny = y + dy[d];
+                
+                // 범위 및 방문 체크
+                if (nx == n || nx == -1 || ny == n | ny == -1 ||
+                    map[ny][nx] != 0) break;
+                
+                x = nx;
+                y = ny;
             }
-            if (y+1 >=n || map[y+1][x] != 0) break;
-            y++;
+            
+            x = nx;
+            y = ny;
+            
         }
         
         // 2. 하나의 정수 배열로 변환하기
@@ -55,6 +52,3 @@ class Solution {
     }
 }
 
-
-// 1
-// 2 9
