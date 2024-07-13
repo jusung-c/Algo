@@ -12,21 +12,21 @@ body:
     attributes:
       label: 해결 과정
       value: |
-      ### 문제 설명
-
-      <br/>
-
-      ---
-
-      ### 아이디어
-
-      <br/>
-
-      ---
-
-      ### 시간 복잡도
-
-      <br/>
+        ### 문제 설명
+  
+        <br/>
+  
+        ---
+  
+        ### 아이디어
+  
+        <br/>
+  
+        ---
+  
+        ### 시간 복잡도
+  
+        <br/>
     validations:
       required: true
   - type: textarea
