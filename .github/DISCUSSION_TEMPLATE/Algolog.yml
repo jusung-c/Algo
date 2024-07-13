@@ -10,7 +10,6 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: 해결 과정
       value: |
         ### 문제 설명
   
