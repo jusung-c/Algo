@@ -1,17 +1,15 @@
 title: "[플랫폼] "
 labels: 제목
 body:
+  - type: input
+    id: link
+    attributes:
+      label: 문제 링크
+    validations:
+      required: false
   - type: markdown
     attributes:
       value: |
-        ## 제목
-  
-        문제: 
-        
-        <br/>
-        
-        ---
-  
         ### 문제 설명
   
   
