@@ -6,34 +6,21 @@ body:
     attributes:
       label: 문제 링크
     validations:
-      required: false
-  - type: markdown
+      required: true
+  - type: input
+    id: description
     attributes:
-      value: |
-        ### 문제 설명
-  
-  
-        <br/>
-        
-        ---
-  
-        ### 아이디어
-  
-  
-        <br/>
-        
-        ---
-  
-        ### 시간 복잡도
-  
-  
-        <br/>
-        
-        ---
-  
-        ### 구현
-  
-        ```java
-
-        
-        ```
+      label: 문제 설명
+    validations:
+      required: true
+  - type: input
+    id: time
+    attributes:
+      label: 시간 복잡도
+    validations:
+      required: true
+  - type: textarea
+    id: java-code
+    attributes:
+      label: 구현
+      render: java
