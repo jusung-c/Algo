@@ -7,18 +7,16 @@ body:
       label: 문제 링크
     validations:
       required: true
-  - type: textarea
+  - type: markdown
     id: description
     attributes:
       label: 문제 설명
-      render: markdown
     validations:
       required: true
-  - type: textarea
+  - type: markdown
     id: time
     attributes:
       label: 시간 복잡도
-      render: markdown
     validations:
       required: true
   - type: textarea
