@@ -7,14 +7,14 @@ body:
       label: 문제 링크
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: description
     attributes:
       label: 문제 설명
       render: markdown
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: time
     attributes:
       label: 시간 복잡도
