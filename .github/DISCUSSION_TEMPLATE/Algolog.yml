@@ -12,10 +12,11 @@ body:
     attributes:
       label: 문제 조건
       value: |
-        --
+        조건
         
         
         <br/>
+        
         ---
         
         ### 아이디어
