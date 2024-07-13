@@ -3,7 +3,6 @@ labels: 제목
 body:
   - type: markdown
     attributes:
-      label: 문제 설명
       value: |
         ## 제목
   
@@ -40,4 +39,3 @@ body:
 
         
         ```
-      render: render
