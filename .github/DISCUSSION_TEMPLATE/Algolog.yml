@@ -1,7 +1,7 @@
 title: "[플랫폼] "
 labels: 제목
 body:
-  - type: textarea
+  - type: markdown
     attributes:
       label: 문제 설명
       value: |
@@ -40,4 +40,4 @@ body:
 
         
         ```
-      render: markdown
+      render: render
