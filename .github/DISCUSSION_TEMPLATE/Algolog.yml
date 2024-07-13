@@ -1,11 +1,34 @@
 body:
-- type: markdown
-  attributes:
-    value: "## Thank you for contributing to our project!"
-- type: markdown
-  attributes:
-    value: |
-      Thanks for taking the time to fill out this bug report
 - type: textarea
   attributes:
-    label: "What's wrong?"
+    description: "How do you trigger this bug? Please walk us through it step by step."
+    value: |
+      ## 제목
+
+      문제: [문제 링크를 여기에 삽입하세요](#)
+
+      ---
+
+      ### 문제 설명
+
+      문제에 대한 설명을 여기에 쓰세요.
+
+      ---
+
+      ### 아이디어
+
+      해결 방법에 대한 아이디어를 여기에 쓰세요.
+
+      ---
+
+      ### 시간 복잡도
+
+      해결책의 시간 복잡도를 여기에 설명하세요.
+
+      ---
+
+      ### 구현
+
+      ```java
+      // Java 코드를 여기에 삽입하세요
+      ```
