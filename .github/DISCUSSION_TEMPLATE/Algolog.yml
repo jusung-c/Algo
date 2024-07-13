@@ -1,5 +1,5 @@
-title: "[General] "
-labels: ["General Introduction"]
+title: "[플랫폼] "
+labels: 제목
 body:
   - type: textarea
     attributes:
@@ -40,3 +40,4 @@ body:
 
         
         ```
+      render: bash
