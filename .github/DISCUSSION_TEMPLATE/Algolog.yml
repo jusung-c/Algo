@@ -24,3 +24,5 @@ body:
     attributes:
       label: 구현
       render: java
+    validations:
+      required: true
