@@ -13,11 +13,20 @@ body:
       label: 문제 조건
       value: |
         <br/>
+
+        
         ---
+        
         ### 아이디어
+
+        
         <br/>
+        
         ---
+        
         ### 시간 복잡도
+
+        
         <br/>
     validations:
       required: true
