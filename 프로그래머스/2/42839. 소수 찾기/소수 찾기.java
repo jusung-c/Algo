@@ -12,8 +12,7 @@ class Solution {
         return true;
     }
     
-    private Set<Integer> getPrimes(int acc, List<Integer> numbers) {
-        Set<Integer> primes = new HashSet<>();
+    private void getPrimes(int acc, List<Integer> numbers, Set<Integer> primes) {
         if (isPrime(acc)) primes.add(acc); // 소수 판별
         
         // 숫자 이어붙이기
@@ -23,10 +22,8 @@ class Solution {
             List<Integer> nextNumbers = new ArrayList<>(numbers);
             nextNumbers.remove(i);
             
-            primes.addAll(getPrimes(nextAcc, nextNumbers));
+            getPrimes(nextAcc, nextNumbers, primes);
         }
-            
-        return primes;
     }
     
     public int solution(String nums) {
@@ -36,6 +33,9 @@ class Solution {
             .boxed()
             .collect(Collectors.toList());
         
-        return getPrimes(0, numbers).size();
+        Set<Integer> primes = new HashSet<>();
+        getPrimes(0, numbers, primes);
+        
+        return primes.size();
     }
 }
