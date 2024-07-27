@@ -1,58 +1,61 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
 class Solution {
-    private static final int[] dx = {0, 1, -1};
-    private static final int[] dy = {1, 0, -1};
+    // 아래로 -> 오른쪽으로 -> 왼쪽 대각선 위로
+    int[] dx = {0, 1, -1};
+    int[] dy = {1, 0, -1};
 
     public int[] solution(int n) {
+        int[] answer = {};
 
-        ArrayList<Integer> answer = new ArrayList<>();
-
+        // n x n 배열 생성
         int[][] map = new int[n][n];
-        int v = 1;
-        int y = 0;
-        int x = 0;
-        int d = 0;
 
-        // 1. 방향 순서대로 진행하면서 칸 채우기
+        // map 채우기
+        map = visit(map, n);
+
+        return Arrays.stream(map)      // Stream<int[]>
+                .flatMapToInt(Arrays::stream)   // Stream<IntStream>
+                .filter(i -> i != 0)
+                .toArray();
+    }
+
+    private int[][] visit(int[][] map, int n) {
+        int v = 1;
+        int d = 0;
+        int x = 0;
+        int y = 0;
+
         while (true) {
+            // 방문
             map[y][x] = v++;
 
-            // 방향을 바꿀 것인지 진행한 방향 그대로 갈 것인지 판단해야 한다.
-
-            // 일단 방향 그대로 진행할 경우 범위 및 이미 방문한 곳인지 확인한다.
+            // 진행했던 방향 그대로 진행할 수 있는지 판단
             int nx = x + dx[d];
             int ny = y + dy[d];
-            if (nx == n || nx == -1 || ny == n || ny == -1
-                    || map[ny][nx] != 0) {
+            if (nx == n || nx == -1 || ny == n || ny == -1 || map[ny][nx] != 0) {
 
-                // 방향 전환해야할 경우 전환할 방향도 마찬가지로 검증한다.
+                // 진행할 수 없는 경우 다음 방향으로 진행할 수 있는지 체크
                 d = (d + 1) % 3;
                 nx = x + dx[d];
                 ny = y + dy[d];
-                if (nx == n || nx == -1 || ny == n || ny == -1
-                        || map[ny][nx] != 0) {
 
-                    // 방향을 전환해도 이동할 수 없다면 무한 루프를 탈출한다.
-                    break;
-                }
+                // 다음 방향으로도 진행 못하면 탈출
+                if (nx == n || nx == -1 || ny == n || ny == -1 || map[ny][nx] != 0) break;
+
             }
-            
+
+            // 정해진 다음 좌표로 설정
             x = nx;
             y = ny;
-            
         }
 
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j <= i; j++) {
-                answer.add(map[i][j]);
-            }
-        }
+        return map;
+    }
 
-        return answer.stream()      // Stream<Integer>
-                .mapToInt(Integer::intValue)    // IntStream
-                .toArray();         // int[]
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        solution.solution(4);
     }
 }
