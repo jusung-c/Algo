@@ -1,27 +1,27 @@
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 class Solution {
     long maxX = Long.MIN_VALUE;
-    long maxY = Long.MIN_VALUE;
     long minX = Long.MAX_VALUE;
+    long maxY = Long.MIN_VALUE;
     long minY = Long.MAX_VALUE;
 
-    private class Point {
-        private final long x, y;
+    class Point {
+        long x, y;
 
         public Point(long x, long y) {
             this.x = x;
             this.y = y;
         }
     }
-    
-    public String[] solution(int[][] line) {
 
+    public String[] solution(int[][] line) {
         List<Point> pointList = new ArrayList<>();
 
-        // 1. 주어진 좌표의 교점 구하기
-        for (int i = 0; i < line.length; i++) {
+        // 1. 모든 직선에 대해 정수인 교점을 구한다.
+        for (int i=0; i < line.length; i++) {
             for (int j = i + 1; j < line.length; j++) {
                 Point p = getPoint(line[i][0], line[i][1], line[i][2],
                         line[j][0], line[j][1], line[j][2]);
@@ -29,68 +29,76 @@ class Solution {
                 if (p != null) pointList.add(p);
             }
         }
+//
+//        for (Point p : pointList) {
+//            System.out.print("x = " + p.x);
+//            System.out.println(" y = " + p.y);
+//        }
 
-        // 2. 사각형 생성
+        // 2. 사각형의 가로, 세로 길이를 구한 뒤 사각형 이차원 배열을 선언한다.
         String[][] angle = makeAngle(pointList);
 
-        // 3. 교점을 사각형에 찍기
-        // 사분면의 교점을 배열로 옮기기 위해
-        // x축은 (p.x - minX)로 음수 값들을 다 오른쪽으로 넘기고
-        // y축은 (p.y - maxY)로 양수 값들을 다 아래쪽으로 넘긴다.
-        // 이 때 배열에서의 y 좌표는 사분면과 부호가 반대이므로 -(p.y - maxY)로 처리한다.
-        for (Point p : pointList) {
-            int newX = (int) (p.x - minX);
-            int newY = (int) (maxY - p.y);
-
-            angle[newY][newX] = "*";
+        for (String[] arr : angle) {
+            Arrays.fill(arr, ".");
         }
 
-        // 4. 문자열 배열로 변환
-        String[] answer = new String[angle.length];
-        for (int i = 0; i < angle.length; i++) {
-            answer[i] = Arrays.stream(angle[i])                  // Stream<String>
-                    .collect(Collectors.joining(""));   // String
+        // 3. 사분면 상의 교점들을 이차원 배열에 옮긴다.
+        for (Point p : pointList) {
+            int x = (int) (p.x - minX);
+            int y = (int) (maxY - p.y);
 
+            angle[y][x] = "*";
+        }
+
+        String[] answer = new String[angle.length];
+
+        for (int i = 0; i < angle.length; i++) {
+            answer[i] = String.join("", angle[i]);
         }
 
         return answer;
     }
 
     private String[][] makeAngle(List<Point> pointList) {
+
         for (Point p : pointList) {
             maxX = Math.max(maxX, p.x);
-            maxY = Math.max(maxY, p.y);
             minX = Math.min(minX, p.x);
+            maxY = Math.max(maxY, p.y);
             minY = Math.min(minY, p.y);
         }
 
         int width = (int) (maxX - minX + 1);
         int height = (int) (maxY - minY + 1);
 
-        String[][] angle = new String[height][width];
-
-        // "."으로 초기화
-        for (String[] list : angle) {
-            Arrays.fill(list, ".");
-        }
-
-        return angle;
+        return new String[height][width];
     }
 
     private Point getPoint(double A, double B, double E,
                            double C, double D, double F) {
-
-        // 1-1. 평행 or 일치 확인
+        // 1-1. 평행하거나 일치하는 경우 제외하기
         if (A * D - B * C == 0) return null;
-
 
         // 1-2. 교점 구하기
         double x = (B * F - E * D) / (A * D - B * C);
         double y = (E * C - A * F) / (A * D - B * C);
 
-        // 1-3. 정수인 경우만 사용
+        // 1-3. 교점이 정수가 아닌 경우 제외하기
         if (x % 1 != 0 || y % 1 != 0) return null;
 
         return new Point((long) x, (long) y);
+    }
+
+    public static void main(String[] args) {
+        int[][] array = {
+                {2, -1, 4},
+                {-2, -1, 4},
+                {0, -1, 1},
+                {5, -8, -12},
+                {5, 8, 12}
+        };
+
+        Solution solution = new Solution();
+        solution.solution(array);
     }
 }
