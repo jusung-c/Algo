@@ -1,63 +1,57 @@
 class Solution {
-    // 상, 좌, 우, 하 순서
-    int[] dx = {0, -1, 1, 0};
-    int[] dy = {-1, 0, 0, 1};
+    int[] dx = {0, 0, 1, -1};
+    int[] dy = {1, -1, 0, 0};
 
     public int[] solution(String[][] places) {
         int[] answer = new int[places.length];
 
-        for (int i = 0; i < places.length; i++) {
-            String[] place = places[i];
+        // 1. 각 대기실별로 반복해 거리두기를 지킨 대기실인지 판단
+        for (int r = 0; r < places.length; r++) {
 
-            // 1. 문자열로 주어진 대기실을 이차원 char 배열로 변환
-            char[][] map = new char[place.length][];
+            // 2. 주어진 대기실 정보를 char[][]로 변환
+            char[][] room = new char[places.length][places[r].length];
 
-            for (int j = 0; j < place.length; j++) {
-                map[j] = place[j].toCharArray();
+            for (int i = 0; i <places[r].length; i++) {
+                room[i] = places[r][i].toCharArray();
             }
 
-            // 2. 거리두기 체크
-            answer[i] = isDistanced(map) ? 1 : 0;
+            // 3. 모든 좌석을 돌면서 사람일 경우 거리두기 체크
+            answer[r] = checkRoom(room) ? 1:0;
         }
-
-        // 1. char[][] map으로 변환
-        char[][] map = new char[5][5];
-
 
         return answer;
     }
 
-    private boolean isDistanced(char[][] map) {
-        for (int y = 0; y < map.length; y++) {
-            for (int x = 0; x < map[y].length; x++) {
-                if (map[y][x] != 'P') continue;
+    private boolean checkRoom(char[][] room) {
+        for (int y = 0; y < room.length; y++) {
+            for (int x = 0; x < room[y].length; x++) {
+                // 사람일 경우 체크 시작
+                if (room[y][x] == 'P') {
+//                    System.out.println("y = " + y + " x = " + x);
 
-                // 거리두기 검사
-                if (!isDistanced(map, x, y)) return false;
+                    if(!checkRoom(room, y, x)) return false;
+                }
             }
         }
 
         return true;
     }
 
-    private boolean isDistanced(char[][] map, int x, int y) {
-
+    private boolean checkRoom(char[][] room, int y, int x) {
+//        System.out.println("호출!");
         for (int d = 0; d < 4; d++) {
             int nx = x + dx[d];
             int ny = y + dy[d];
 
-            // map 범위 체크
-            if (nx == 5 || nx == -1 || ny == 5 || ny == -1) continue;
+            // room의 범위를 벗어나는 경우 무시
+            if (ny < 0 || ny >= room.length ||
+                    nx < 0 || nx >= room.length) continue;
 
-            // 사람이 있으면 바로 false, 파티션은 고려 안함, 빈책상일 경우 빈책상 주변 탐색
-            switch (map[ny][nx]) {
-                case 'P':
-                    return false;
-                case 'X':
-                    break;
+            switch (room[ny][nx]) {
+                case 'P': return false;
+                case 'X': break;
                 case 'O':
-                    // 빈책상 주변에 사람이 있는지 확인 -> 있다면 거리두기 어긴 것
-                    if (existSidePeople(map, nx, ny, 3 - d)) return false;
+                    if (isNext(room, ny, nx)) return false;
                     break;
             }
         }
@@ -65,22 +59,34 @@ class Solution {
         return true;
     }
 
-    private boolean existSidePeople(char[][] map, int x, int y, int exclude) {
+    private boolean isNext(char[][] room, int y, int x) {
+        int cnt = 0;
 
         for (int d = 0; d < 4; d++) {
-            // 역방향은 제외
-            if (exclude == d) continue;
-
             int nx = x + dx[d];
             int ny = y + dy[d];
 
-            // map 범위 체크
-            if (nx == 5 || nx == -1 || ny == 5 || ny == -1) continue;
+            // room의 범위를 벗어나는 경우 무시
+            if (ny < 0 || ny >= room.length ||
+                    nx < 0 || nx >= room.length) continue;
 
-            // 사람이 있을 경우 거리두기 안 지킨 것
-            if (map[ny][nx] == 'P') return true;
+            if (room[ny][nx] == 'P') cnt++;
         }
 
-        return false;
+        return cnt > 1;
+    }
+
+
+    public static void main(String[] args) {
+        String[][] places = {
+                {"POOOP", "OXXOX", "OPXPX", "OOXOX", "POXXP"},
+                {"POOPX", "OXPXP", "PXXXO", "OXXXO", "OOOPP"},
+                {"PXOPX", "OXOXP", "OXPOX", "OXXOP", "PXPOX"},
+                {"OOOXX", "XOOOX", "OOOXX", "OXOOX", "OOOOO"},
+                {"PXPXP", "XPXPX", "PXPXP", "XPXPX", "PXPXP"}
+        };
+
+        Solution solution = new Solution();
+        solution.solution(places);
     }
 }
