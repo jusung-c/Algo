@@ -1,12 +1,20 @@
 class Solution {
     public int solution(int n) {
-        // 10진법 정수 -> 3진법 문자열
+        // 1. n을 3진법으로 표현
         String s = Integer.toString(n, 3);
+
+        System.out.println("s = " + s);
+
+        // 2. 문자열 뒤집기
+        s = new StringBuilder(s).reverse().toString();
+
+        System.out.println("s = " + s);
+
+        // 3. 10진법으로 표현
+        int answer = Integer.parseInt(s, 3);
+
+        System.out.println("answer = " + answer);
         
-        // 문자열 뒤집기
-        String reversed = new StringBuilder(s).reverse().toString();
-        
-        // 3진법 문자열 -> 10진법 정수
-        return Integer.parseInt(reversed, 3);
+        return answer;
     }
 }
