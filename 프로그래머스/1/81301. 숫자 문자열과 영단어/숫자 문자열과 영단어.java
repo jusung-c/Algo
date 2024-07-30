@@ -1,14 +1,14 @@
 class Solution {
-    private static final String[] words = {
-        "zero", "one", "two", "three", "four", "five",
-        "six", "seven", "eight", "nine"
+    String[] numbers = new String[]{
+            "zero", "one", "two", "three", "four"
+            , "five", "six", "seven", "eight", "nine"
     };
-    
+
     public int solution(String s) {
-        for (int i=0; i<words.length; i++) {
-            s = s.replace(words[i], Integer.toString(i));
+        for (int i = 0; i <= 9; i++) {
+            s = s.replaceAll(numbers[i].toString(), String.valueOf(i));
         }
-        
+
         return Integer.parseInt(s);
     }
 }
