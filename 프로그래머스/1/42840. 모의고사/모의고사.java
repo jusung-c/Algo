@@ -1,37 +1,37 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
 
 class Solution {
     public int[] solution(int[] answers) {
-        int[] a = new int[] {1, 2, 3, 4, 5};
-        int[] b = new int[] {2, 1, 2, 3, 2, 4, 2, 5};
-        int[] c = new int[] {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
-        
-        int ac = 0;
-        int bc = 0;
-        int cc = 0;
-        
-        for (int i=0; i<answers.length; i++) {
-            // a 수포자
-            if (answers[i] == a[i % a.length]) ac++;
-            if (answers[i] == b[i % b.length]) bc++;
-            if (answers[i] == c[i % c.length]) cc++;
+        // 1. 각 수포자들의 패턴 정의
+        int[][] pattern = new int[][]{
+                {1, 2, 3, 4, 5},
+                {2, 1, 2, 3, 2, 4, 2, 5},
+                {3, 3, 1, 1, 2, 2, 4, 4, 5, 5}
+        };
+
+        int[] cnt = new int[3];
+
+        // 2. 모든 답을 돌면서 각 수포자들이 답을 맞췄는지 확인
+        for (int i = 0; i < answers.length; i++) {
+            int answer = answers[i];
+
+            for (int j = 0; j < pattern.length; j++) {
+                if (answer == pattern[j][i % pattern[j].length]) cnt[j]++;
+            }
         }
-        
-        System.out.println("a: " + ac + " b: " + bc + " c: " + cc);
-        
-        int[] answer = new int[] {ac, bc, cc};
-        
-        ArrayList<Integer> arr = new ArrayList<>();
-        
-        int max = Integer.MIN_VALUE;
-        for (int i=0; i<answer.length; i++) {
-            max = Math.max(answer[i], max);
+
+
+        // 3. 가장 많은 답을 맞춘 수포자를 배열에 담아 반환
+        List<Integer> answer = new ArrayList<>();
+
+        int max = Arrays.stream(cnt).max().getAsInt();
+        for (int i = 0; i < cnt.length; i++) {
+            if(cnt[i] == max) answer.add(i + 1);
         }
-        
-        for (int i=0; i<answer.length; i++) {
-            if (max == answer[i]) arr.add(i+1);
-        }
-        
-        return arr.stream().mapToInt(i -> i).toArray();
+
+        return answer.stream().mapToInt(i -> i).toArray();
     }
 }
