@@ -2,54 +2,71 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
+/*
+    0. 문제
+
+    1. 아이디어
+
+    2. 시간 복잡도
+
+ */
+
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
+    static BufferedReader br;
+    static StringTokenizer st;
     static int N, M;
-    static int[] selected;
-    static int[] nums;
-    static boolean[] used;
+    static int[] selected, numbers;
+    static boolean[] isUsed;
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        st = new StringTokenizer(br.readLine(), " ");
-        nums = new int[N + 1];
+        selected = new int[M + 1];
+        numbers = new int[N + 1];
+        isUsed = new boolean[N + 1];
+
+        st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) {
-            nums[i] = Integer.parseInt(st.nextToken());
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(nums);
-
-        selected = new int[M + 1];
-        used = new boolean[N + 1];
-
-        rec_func(1);
-
-        br.close();
-        bw.close();
+        Arrays.sort(numbers);
     }
 
-    static void rec_func(int k) throws IOException {
+    private static void pro(int k) throws IOException {
+        // 종료 조건
         if (k == M + 1) {
             for (int i = 1; i <= M; i++) {
-                bw.write(selected[i]+" ");
+                bw.write(selected[i] + " ");
             }
             bw.write("\n");
+            return;
+        }
 
-        } else {
-            for (int cand = 1; cand <= N; cand++) {
-                if(used[cand]) continue;
-                selected[k] = nums[cand];
-                used[cand] = true;
-                rec_func(k + 1);
-                used[cand] = false;
-            }
+        for (int i = 1; i <= N; i++) {
+            if (isUsed[i]) continue;
+
+            selected[k] = numbers[i];
+            isUsed[i] = true;
+
+            pro(k + 1);
+
+            selected[k] = 0;
+            isUsed[i] = false;
         }
     }
-}
 
+    public static void main(String[] args) throws Exception {
+        init();
+
+        // 재귀로 가능한 모든 수 탐색
+        pro(1);
+
+        bw.close();
+    }
+}
