@@ -1,82 +1,88 @@
 import java.io.*;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static BufferedReader br;
     static StringTokenizer st;
-
-    static int N;
+    static int numCnt, N;
+    static int[] numbers, opcode, selected;
     static int max = Integer.MIN_VALUE;
     static int min = Integer.MAX_VALUE;
-    static int[] num, operator, selected;
-
-    static final int M = 4;
 
     public static void init() throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
 
-        N = Integer.parseInt(br.readLine());
-        num = new int[N + 1];
-        operator = new int[M + 1];
-        selected = new int[N];
+        numCnt = Integer.parseInt(br.readLine());
+        N = numCnt - 1;
 
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= N; i++) {
-            num[i] = Integer.parseInt(st.nextToken());
+        numbers = new int[numCnt];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < numCnt ; i++) {
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
 
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= M; i++) {
-            operator[i] = Integer.parseInt(st.nextToken());
+        selected = new int[N + 1];
+        opcode = new int[4];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < 4; i++) {
+            opcode[i] = Integer.parseInt(st.nextToken());
         }
     }
 
-    private static void pro(int k, int value) throws IOException {
-        if (k == N) {
-            max = Math.max(max, value);
-            min = Math.min(min, value);
-        } else {
-            for (int i = 1; i <= M; i++) {
-                if (operator[i] == 0) continue;
+    private static void pro(int k) throws IOException {
+        // 종료 조건
+        if (k == N + 1) {
+            int num = cal(selected);
 
-                operator[i]--;
-                selected[k] = i;
+            max = Math.max(max, num);
+            min = Math.min(min, num);
 
-                pro(k + 1, calculate(value, i, num[k + 1]));
+            return;
+        }
 
-                operator[i]++;
-                selected[k] = 0;
+        for (int i = 0; i < 4; i++) {
+            if (opcode[i] == 0) continue;
+
+            selected[k] = i;
+            opcode[i]--;
+
+            pro(k + 1);
+
+            selected[k] = 0;
+            opcode[i]++;
+
+        }
+    }
+
+    private static int cal(int[] selected) {
+        int result = numbers[0];
+
+        for (int i = 1; i <= N; i++) {
+            switch (selected[i]) {
+                case 0:
+                    result += numbers[i];
+                    break;
+                case 1:
+                    result -= numbers[i];
+                    break;
+                case 2:
+                    result *= numbers[i];
+                    break;
+                case 3:
+                    result /= numbers[i];
+                    break;
             }
         }
 
-
-    }
-
-    private static int calculate(int value, int operator, int operand) {
-        if (operator == 1) {
-            return value += operand;
-        }
-
-        if (operator == 2) {
-            return value -= operand;
-        }
-
-        if (operator == 3) {
-            return value *= operand;
-        }
-
-        if (operator == 4) {
-            return value /= operand;
-        }
-
-        return value;
+        return result;
     }
 
     public static void main(String[] args) throws Exception {
         init();
 
-        pro(1, num[1]);
+        pro(1);
 
         bw.write(max + "\n");
         bw.write(min + "\n");
