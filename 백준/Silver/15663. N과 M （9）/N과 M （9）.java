@@ -3,54 +3,60 @@ import java.util.*;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
+    static BufferedReader br;
+    static StringTokenizer st;
     static int N, M;
-    static int[] nums;
-    static boolean[] used;
-    static LinkedHashSet<String> set = new LinkedHashSet<>();
-    static String numString = "";
+    static int[] selected, numbers;
+    static boolean[] isUsed;
+    static LinkedHashSet<String> answer = new LinkedHashSet<>();
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        st = new StringTokenizer(br.readLine(), " ");
-        nums = new int[N + 1];
+        selected = new int[M + 1];
+        isUsed = new boolean[N + 1];
+
+        numbers = new int[N + 1];
+        st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) {
-            nums[i] = Integer.parseInt(st.nextToken());
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(nums);
-
-        used = new boolean[10001];
-
-        rec_func(1, numString);
-
-        Iterator<String> iterator = set.iterator();
-        while (iterator.hasNext()) {
-            bw.write(iterator.next() + "\n");
-        }
-
-        br.close();
-        bw.close();
+        Arrays.sort(numbers);
     }
 
-    static void rec_func(int k, String numString) throws IOException {
+    private static void pro(int k, String result) throws IOException {
+        // 종료 조건
         if (k == M + 1) {
-            set.add(numString);
-        } else {
-            for (int i = 1; i <= N; i++) {
-                if(used[i]) continue;
-
-                used[i] = true;
-
-                rec_func(k + 1, numString+nums[i] + " ");
-
-                used[i] = false;
-            }
+            answer.add(result);
+            return;
         }
+
+        for (int i = 1; i <= N; i++) {
+            if (isUsed[i]) continue;
+
+            isUsed[i] = true;
+
+            pro(k + 1, result + numbers[i] + " ");
+
+            isUsed[i] = false;
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        init();
+
+        pro(1, "");
+
+        for (String s : answer) {
+            bw.write(s + "\n");
+        }
+
+        bw.close();
     }
 }
