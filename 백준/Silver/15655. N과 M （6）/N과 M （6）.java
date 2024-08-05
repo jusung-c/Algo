@@ -4,49 +4,52 @@ import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
+    static BufferedReader br;
+    static StringTokenizer st;
     static int N, M;
-    static int[] selected;
-    static int[] nums;
-    static boolean[] used;
+    static int[] selected, numbers;
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        st = new StringTokenizer(br.readLine(), " ");
-        nums = new int[N + 1];
+        selected = new int[M + 1];
+
+        numbers = new int[N + 1];
+        st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) {
-            nums[i] = Integer.parseInt(st.nextToken());
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(nums);
-
-        selected = new int[M + 1];
-        used = new boolean[N + 1];
-
-        rec_func(1, 1);
-
-        br.close();
-        bw.close();
+        Arrays.sort(numbers);
     }
 
-    static void rec_func(int k, int prev) throws IOException {
+    private static void pro(int k, int prev) throws IOException {
+        // 종료 조건
         if (k == M + 1) {
             for (int i = 1; i <= M; i++) {
-                bw.write(selected[i]+" ");
+                bw.write(selected[i] + " ");
             }
             bw.write("\n");
-
-        } else {
-            for (int cand = prev; cand <= N; cand++) {
-                selected[k] = nums[cand];
-                rec_func(k + 1, cand+1);
-            }
+            return;
         }
+
+        for (int i = prev; i <= N; i++) {
+            selected[k] = numbers[i];
+            pro(k + 1, i + 1);
+            selected[k] = 0;
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        init();
+
+        pro(1, 1);
+
+        bw.close();
     }
 }
-
