@@ -1,67 +1,53 @@
-// 언어 : JAVA , (성공/실패) : 1/0 ,
-// 메모리 : 27160 KB , 시간 : 352 ms
-
 import java.io.*;
 import java.util.*;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static int N, M, sum;
-    static int[] selected, num, visit;
-    static LinkedHashSet<String> result;
+    static BufferedReader br;
+    static StringTokenizer st;
+    static int N, M;
+    static int[] numbers;
+    static LinkedHashSet<String> answer = new LinkedHashSet<>();
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
 
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        selected = new int[M + 1];
-        num = new int[N + 1];
-        visit = new int[N + 1];
-        result = new LinkedHashSet<String>();
-        String numString = "";
-
-        st = new StringTokenizer(br.readLine(), " ");
+        numbers = new int[N + 1];
+        st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) {
-            num[i] = Integer.parseInt(st.nextToken());
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(num);
+        Arrays.sort(numbers);
+    }
 
-        rec_func(1, 0, numString);
+    private static void pro(int k, int prev, String result) throws IOException {
+        // 종료 조건
+        if (k == M + 1) {
+            answer.add(result);
+            return;
+        }
 
-        Iterator<String> iterator = result.iterator();
-        while (iterator.hasNext()) {
-            bw.write(iterator.next());
-            bw.write("\n");
+        for (int i = prev; i <= N; i++) {
+
+            pro(k + 1, i + 1, result + numbers[i] + " ");
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        init();
+
+        pro(1, 1, "");
+
+        for (String s : answer) {
+            bw.write(s + "\n");
         }
 
         bw.close();
-    }
-
-    private static void rec_func(int k, int prev, String numString) throws IOException {
-        if (k == M + 1) {
-            for (int i = 1; i <= M; i++) {
-                result.add(numString);
-            }
-
-
-        } else {
-            for (int i = prev + 1; i <= N; i++) {
-                int n = num[i];
-
-                if (visit[i] == 1) continue;
-
-                selected[k] = n;
-                visit[i] = 1;
-
-                rec_func(k + 1, i, numString + n + " ");
-
-                selected[k] = 0;
-                visit[i] = 0;
-            }
-        }
     }
 }
