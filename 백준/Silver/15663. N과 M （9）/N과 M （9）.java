@@ -6,7 +6,7 @@ public class Main {
     static BufferedReader br;
     static StringTokenizer st;
     static int N, M;
-    static int[] selected, numbers;
+    static int[] numbers;
     static boolean[] isUsed;
     static LinkedHashSet<String> answer = new LinkedHashSet<>();
 
@@ -17,7 +17,6 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        selected = new int[M + 1];
         isUsed = new boolean[N + 1];
 
         numbers = new int[N + 1];
