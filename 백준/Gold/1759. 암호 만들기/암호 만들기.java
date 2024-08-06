@@ -1,79 +1,67 @@
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
     static StringTokenizer st;
     static int N, M;
-    static char[] arr, selected;
+    static char[] arr;
+    static Set<Character> vowels = new HashSet<>();
 
     public static void init() throws IOException {
-        st = new StringTokenizer(br.readLine(), " ");
+        br = new BufferedReader(new InputStreamReader(System.in));
+
+        st = new StringTokenizer(br.readLine());
         M = Integer.parseInt(st.nextToken());
         N = Integer.parseInt(st.nextToken());
 
-        arr = new char[N + 1];
-        arr[0] = 'a';
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= N; i++) {
-            arr[i] = st.nextToken().charAt(0);
-        }
+        arr = br.readLine().replaceAll(" ", "").toCharArray();
 
         Arrays.sort(arr);
 
-        selected = new char[M + 1];
+        vowels.add('a');
+        vowels.add('e');
+        vowels.add('i');
+        vowels.add('o');
+        vowels.add('u');
 
     }
 
-    public static void main(String[] args) throws IOException {
+    private static void pro(int k, int prev, StringBuilder acc, int vowel, int consonant) throws IOException {
+
+        if (k == M) {
+            if (vowel >= 1 && consonant >= 2) {
+                bw.write(acc.toString() + "\n");
+            }
+            return;
+        }
+
+        for (int i = prev; i < N; i++) {
+            char c = arr[i];
+
+            // 모음, 자음 개수 업데이트
+            boolean isVowel = vowels.contains(c);
+            if (isVowel) vowel++;
+            else consonant++;
+
+            pro(k+1, i + 1, acc.append(c), vowel, consonant);
+
+            acc.deleteCharAt(acc.length() - 1);
+            if (isVowel) vowel--;
+            else consonant--;
+
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
         init();
 
-        func(1, 0);
+        pro(0, 0, new StringBuilder(), 0, 0);
 
-        br.close();
         bw.close();
-    }
-
-    private static void func(int k, int prev) throws IOException {
-        if (k == M + 1) {
-            if (test()) {
-                for (int i = 1; i <= M; i++) {
-                    bw.write(selected[i]);
-                }
-                bw.write("\n");
-            }
-        } else {
-            for (int i = prev + 1; i <= N; i++) {
-                selected[k] = arr[i];
-
-                func(k + 1, i);
-
-                selected[k] = 0;
-            }
-        }
-    }
-
-    static boolean test() {
-        int vowel = 0;
-        int cons = 0;
-
-        for (int i = 1; i <= M; i++) {
-            char c = selected[i];
-
-            if (c == 'a' || c == 'e'
-                    || c == 'i' || c == 'o' || c == 'u') {
-                vowel++;
-            } else {
-                cons++;
-            }
-        }
-
-        if (vowel >= 1 && cons >= 2) {
-            return true;
-        }
-
-        return false;
     }
 }
