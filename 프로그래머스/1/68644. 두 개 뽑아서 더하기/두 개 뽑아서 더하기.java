@@ -1,31 +1,34 @@
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 class Solution {
-    private Set<Integer> set;
-    private int[] numbers;
 
-    private void combine(int start, int count, int currentSum) {
-        // Base case: if we have selected 2 numbers, add the sum to the set
-        if (count == 2) {
-            set.add(currentSum);
+    // 중복없이 순서없이 2개를 뽑는 조합 문제
+    private void getNumbers(int k, int prev, int[] selected, int[] numbers, Set<Integer> answer) {
+        if (k == 2) {
+            int sum = selected[0] + selected[1];
+            answer.add(sum);
             return;
         }
-        
-        // Iterate through the numbers array starting from 'start' index
-        for (int i = start; i < numbers.length; i++) {
-            // Recursively call combine to pick the next number
-            combine(i + 1, count + 1, currentSum + numbers[i]);
+
+        for (int i = prev; i < numbers.length; i++) {
+            selected[k] = numbers[i];
+
+            getNumbers(k + 1, i + 1, selected, numbers, answer);
+
+            selected[k] = 0;
         }
     }
-    
+
     public int[] solution(int[] numbers) {
-        set = new HashSet<>();
-        this.numbers = numbers;
-        
-        // Start the recursive combination process
-        combine(0, 0, 0);
-        
-        return set.stream().mapToInt(i -> i).sorted().toArray();
+
+        int[] selected = new int[2];
+        Set<Integer> answer = new LinkedHashSet<>();
+
+        getNumbers(0, 0, selected, numbers, answer);
+
+        return answer.stream()
+                .sorted()
+                .mapToInt(i -> i)
+                .toArray();
     }
 }
