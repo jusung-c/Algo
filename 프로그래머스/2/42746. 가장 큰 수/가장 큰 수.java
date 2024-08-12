@@ -1,20 +1,17 @@
-import java.util.stream.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 class Solution {
     public String solution(int[] numbers) {
-        
-        return Arrays.stream(numbers)            // IntStream
-            .mapToObj(String::valueOf)                             // Stream<String>
-            .sorted((s1, s2) -> {
-                // 두 숫자를 순서대로, 역순으로 이어붙인 뒤 비교
-                int original = Integer.parseInt(s1 + s2);
-                int reversed = Integer.parseInt(s2 + s1);
-                
-                return reversed - original;
-            })                                   // Stream<String>
-            .collect(Collectors.joining(""))     // String
-            .replaceAll("^0+", "0");             // String
-            
+        return Arrays.stream(numbers)
+                .mapToObj(String::valueOf)
+                .sorted((s1, s2) -> {
+                    int original = Integer.parseInt(s1 + s2);
+                    int reversed = Integer.parseInt(s2 + s1);
+
+                    return reversed - original;
+                })
+                .collect(Collectors.joining(""))
+                .replaceAll("^0+", "0");
     }
 }
