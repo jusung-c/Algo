@@ -2,6 +2,10 @@ import java.util.*;
 import java.util.stream.*;
 
 class Solution {
+    static Map<Integer, List<Course>> courses;
+    static List<Set<String>> orderList;
+    
+    
     private static class Course {
         private final String course;
         private final int cnt;
@@ -12,9 +16,7 @@ class Solution {
         }
     }
 
-    private void getCourses(char next, Set<String> selected,
-                            List<Set<String>> orderList,
-                            Map<Integer, List<Course>> courses) {
+    private void getCourses(char next, Set<String> selected) {
         // 종료 조건 1) 최소 2번 이상 함께 주문된 메뉴가 아닌 경우
         int count = (int) orderList.stream()
                 .filter(o -> o.containsAll(selected))
@@ -47,20 +49,20 @@ class Solution {
         for (char menu = next; menu <= 'Z'; menu++) {
             selected.add(String.valueOf(menu));
 
-            getCourses((char) (menu + 1), selected, orderList, courses);
+            getCourses((char) (menu + 1), selected);
 
             selected.remove(String.valueOf(menu));
         }
     }
 
     public String[] solution(String[] orders, int[] course) {
-        List<Set<String>> orderList = Arrays.stream(orders)
+        orderList = Arrays.stream(orders)
                 .map(String::chars)
                 .map(c -> c.mapToObj(menu -> String.valueOf((char) menu))
                         .collect(Collectors.toSet()))
                 .collect(Collectors.toList());
 
-        Map<Integer, List<Course>> courses = new HashMap<>();
+        courses = new HashMap<>();
         for (int length : course) {
             List<Course> list = new ArrayList<>();
 
@@ -68,7 +70,7 @@ class Solution {
             courses.put(length, list);
         }
 
-        getCourses('A', new HashSet<>(), orderList, courses);
+        getCourses('A', new HashSet<>());
 
         return courses.values().stream()                // Stream<List<Course>>
                 .filter(list -> list.get(0).cnt > 0)    // Stream<List<Course>>
