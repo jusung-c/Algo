@@ -1,36 +1,26 @@
 import java.io.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
-
-/*
-    0. 문제
-        - N인 정수 배열 A와 B
-        - S = A[0] × B[0] + ... + A[N-1] × B[N-1]
-        - S가 최소가되도록 A 재배열
-
-    1. 아이디어
-        - B를 인덱스와 함께 ArrayList에 저장 후 정렬한다.
-        - 정렬된 인덱스의 값을 이용해 A를 재배열한다.
-
-    2. 시간 복잡도
-
- */
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static BufferedReader br;
     static StringTokenizer st;
-    static int N, ans;
-    static int[] A;
-    static Point[] B;
+    static int N;
+    static int[] A, answer;
+    static Elem[] B;
 
-    static class Point implements Comparable<Point> {
+    static class Elem implements Comparable<Elem>{
         int num, idx;
 
+        public Elem(int num, int idx) {
+            this.num = num;
+            this.idx = idx;
+        }
+
         @Override
-        public int compareTo(Point o) {
+        public int compareTo(Elem o) {
+            // 내림차순 정렬
             return o.num - num;
         }
     }
@@ -39,41 +29,44 @@ public class Main {
         br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
-        A = new int[N];
-        B = new Point[N];
+        answer = new int[N];
 
-        st = new StringTokenizer(br.readLine(), " ");
+        A = new int[N];
+        st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N; i++) {
             A[i] = Integer.parseInt(st.nextToken());
         }
 
-        st = new StringTokenizer(br.readLine(), " ");
+        B = new Elem[N];
+        st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N; i++) {
-            B[i] = new Point();
-            B[i].num = Integer.parseInt(st.nextToken());
-            B[i].idx = i;
+            B[i] = new Elem(Integer.parseInt(st.nextToken()), i);
         }
 
     }
 
     private static void pro() throws IOException {
-        ans = 0;
+        int result = 0;
 
-        Arrays.sort(B);
+        // 오름 차순
         Arrays.sort(A);
 
+        // 내림 차순
+        Arrays.sort(B);
+
         for (int i = 0; i < N; i++) {
-            ans += A[i] * B[i].num;
+            answer[B[i].idx] = A[i];
+
+            result += A[i] * B[i].num;
         }
 
+        bw.write(result + " ");
     }
 
     public static void main(String[] args) throws Exception {
         init();
 
         pro();
-
-        bw.write(ans + " ");
 
         bw.close();
     }
