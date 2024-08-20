@@ -1,85 +1,95 @@
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 class Solution {
     public int[] solution(String[] info, String[] query) {
-        Map<String, List<Integer>> scoresMap = buildScoresMap(info);
+        int[] answer = new int[query.length];
 
-        return Stream.of(query)
-                .mapToInt(q -> count(q, scoresMap))
-                .toArray();
+        // 1. 모든 조건에 해당하는 정렬된 점수 리스트를 미리 사전처럼 만들어두기
+        Map<String, List<Integer>> scoreMap = getScoreMap(info);
+
+        // 2. 이분탐색으로 조건에 해당하면서 X 점수 이상인 경우의 수 찾기
+        for (int i = 0; i < query.length; i++) {
+            answer[i] = count(query[i], scoreMap);
+        }
+
+        return answer;
     }
 
-    // qeury에 맞는 지원자 수 세기
-    private int count(String query, Map<String, List<Integer>> scoresMap) {
+    private int count(String query, Map<String, List<Integer>> scoreMap) {
         String[] tokens = query.split(" (and )?");
 
-        // scoresMap에서 검색할 수 있는 키 형태로 만들기
+        // 점수는 빼고 토큰들을 합쳐 검색할 수 있는 key 형태로 만들기
         String key = String.join("", Arrays.copyOf(tokens, tokens.length - 1));
 
-        if (!scoresMap.containsKey(key)) return 0;
-        List<Integer> scores = scoresMap.get(key);
-        
-        int score = Integer.parseInt(tokens[tokens.length - 1]);
-        return scores.size() - binarySearch(score, scoresMap.get(key));
+        // key에 해당하는 점수 리스트 조회
+        if (!scoreMap.containsKey(key)) return 0;
+        List<Integer> scores = scoreMap.get(key);
+
+        // 이분탐색으로 target 점수 이상의 원소 개수 구하기
+        int target = Integer.parseInt(tokens[tokens.length - 1]);
+        return scores.size() - binarySearch(target, scores);
     }
 
-    // 이진탐색으로 target 보다 크거나 같은 값 중 가장 작은 값의 인덱스 구하기
-    private int binarySearch(int score, List<Integer> scores) {
+    private int binarySearch(int target, List<Integer> scores) {
         int start = 0;
-        // 조건을 만족하는 값 중 가장 작은 값이므로 마지막 범위 포함
         int end = scores.size() - 1;
 
         while (end > start) {
             int mid = (start + end) / 2;
 
-            if (scores.get(mid) >= score) {
+            if (scores.get(mid) >= target) {
                 end = mid;
             } else {
                 start = mid + 1;
             }
         }
 
-        if (scores.get(start) < score) {
+        // 범위 안에 마지막 남은 원소가 조건을 만족하는지 확인
+        if (scores.get(start) < target) {
             return scores.size();
         }
 
         return start;
     }
 
-    private Map<String, List<Integer>> buildScoresMap(String[] info) {
-        // key: 검색 조건 | value: 검색 조건에 들어있는 점수들의 리스트
-        Map<String, List<Integer>> scoresMap = new HashMap<>();
+    private Map<String, List<Integer>> getScoreMap(String[] info) {
+
+        Map<String, List<Integer>> scoreMap = new HashMap<>();
 
         for (String s : info) {
             String[] tokens = s.split(" ");
             int score = Integer.parseInt(tokens[tokens.length - 1]);
 
-            // 모든 조건 탐색
-            forEachKey(0, "", tokens, key -> {
-                scoresMap.putIfAbsent(key, new ArrayList<>());
-                scoresMap.get(key).add(score);
+            getCases(0, "", tokens, key -> {
+                // key에 해당하는 값이 존재하지 않으면 새 리스트 넣기
+                scoreMap.putIfAbsent(key, new ArrayList<>());
+
+                // 리스트에 점수 넣어주기
+                scoreMap.get(key).add(score);
             });
         }
 
-        for (List<Integer> list : scoresMap.values()) {
+        // 오름차순 정렬
+        for (List<Integer> list : scoreMap.values()) {
             Collections.sort(list);
         }
 
-        return scoresMap;
+        return scoreMap;
     }
 
-    private void forEachKey(int index, String prefix, String[] tokens, Consumer<String> action) {
+    private void getCases(int index, String prefix, String[] tokens, Consumer<String> action) {
+
         if (index == tokens.length - 1) {
             // prefix가 만들어진 검색 조건
             action.accept(prefix);
-
-            return ;
+            return;
         }
 
-        // 가능한 모든 검색 조건 탐색
-        forEachKey(index + 1, prefix + tokens[index], tokens, action);
-        forEachKey(index + 1, prefix + "-", tokens, action);
+        // 모든 경우의 수 탐색
+        getCases(index + 1, prefix + tokens[index], tokens, action);
+        getCases(index + 1, prefix + "-", tokens, action);
+
     }
+
 }
