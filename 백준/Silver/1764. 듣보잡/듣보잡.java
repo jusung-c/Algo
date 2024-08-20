@@ -1,65 +1,73 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
     static StringTokenizer st;
-    static int N, M;
-    static String[] A, B;
-    static ArrayList<String> result;
-
-    private static void BSearch(String target) {
-        int start = 1;
-        int end = N;
-
-        while (start <= end) {
-            int mid = (start + end) / 2;
-
-            if (A[mid].equals(target)) {
-                result.add(target);
-            }
-
-            // A[mid] - target < 0 -> A[mid] < target
-            if (A[mid].compareTo(target) < 0) {
-                start = mid + 1;
-            } else {
-                end = mid - 1;
-            }
-        }
-    }
+    static int N, M, cnt;
+    static String[] list;
+    static List<String> answer;
 
     public static void init() throws IOException {
-        st = new StringTokenizer(br.readLine(), " ");
+        br = new BufferedReader(new InputStreamReader(System.in));
+
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-        A = new String[N + 1];
+        cnt = 0;
 
-        result = new ArrayList<>();
-
-        for (int i = 1; i <= N; i++) {
-            A[i] = br.readLine();
+        list = new String[N];
+        for (int i = 0; i < N; i++) {
+            list[i] = br.readLine();
         }
 
-        Arrays.sort(A, 1, N + 1);
+        Arrays.sort(list);
+
+        answer = new ArrayList<>();
 
         for (int i = 0; i < M; i++) {
-            BSearch(br.readLine());
+            String target = br.readLine();
+
+            if(binarySearch(target)) {
+                cnt++;
+                answer.add(target);
+            }
         }
+
+    }
+
+    private static boolean binarySearch(String target) {
+        int start = 0;
+        int end = list.length - 1;
+
+        while (end >= start) {
+            int mid = (start + end) / 2;
+            String value = list[mid];
+
+            if (value.equals(target)) return true;
+            else if (value.compareTo(target) > 0) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        }
+
+        return false;
     }
 
     public static void main(String[] args) throws Exception {
         init();
 
-        Collections.sort(result);
-        bw.write(result.size()+"\n");
+        bw.write(cnt + "\n");
 
-        Iterator<String> iter = result.iterator();
-        while (iter.hasNext()) {
-            bw.write(iter.next()+"\n");
+        Collections.sort(answer);
+        
+        for (String s : answer) {
+            bw.write(s + "\n");
         }
 
-        br.close();
         bw.close();
     }
 }
