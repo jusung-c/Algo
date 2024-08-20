@@ -30,6 +30,9 @@ body:
 
         
         <br/>
+
+        ---
+        
     validations:
       required: true
   - type: textarea
