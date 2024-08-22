@@ -1,15 +1,8 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
-
-/*
-    0. 문제
-
-    1. 아이디어
-
-    2. 시간 복잡도
-
- */
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -22,63 +15,79 @@ public class Main {
         br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
-        arr = new int[N + 1];
+        arr = new int[N];
 
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= N; i++) {
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(arr, 1, N + 1);
+        Arrays.sort(arr);
 
         M = Integer.parseInt(br.readLine());
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= M; i++) {
-            int n = Integer.parseInt(st.nextToken());
 
-            int left = left(1, N, n);
-            int right = right(1, N, n);
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < M; i++) {
+            int target = Integer.parseInt(st.nextToken());
 
-            bw.write(right - left - 1 + " ");
+            // 큰 수 중 가장 작은 값의 인덱스 구하기
+            int bigIndex = bigSearch(target);
+
+            // 작은 수 중 가장 큰 값의 인덱스 구하기
+            int smallIndex = smallSearch(target);
+
+            bw.write(bigIndex - smallIndex - 1 + " ");
         }
 
     }
 
-    private static int right(int start, int end, int target) {
+    private static int smallSearch(int target) {
+        int start = 0;
+        int end = arr.length - 1;
+        int result = start - 1;
+
         while (start <= end) {
             int mid = (start + end) / 2;
 
-            if (arr[mid] == target) start = mid + 1;
-            else if (arr[mid] < target) start = mid + 1;
-            else end = mid -1;
+            // 작은 수 중 가장 큰 값의 인덱스 구하기
+            if (arr[mid] == target) {
+                end = mid - 1;
+            } else if (arr[mid] > target) {
+                end = mid - 1;
+            } else if (arr[mid] < target) {
+                result = mid;
+                start = mid + 1;
+            }
         }
 
-        return start;
+        return result;
     }
 
-    private static int left(int start, int end, int target) {
+    private static int bigSearch(int target) throws IOException {
+        int start = 0;
+        int end = arr.length - 1;
+        int result = end + 1;
+
         while (start <= end) {
             int mid = (start + end) / 2;
 
-            if (arr[mid] == target) end = mid - 1;
-            else if (arr[mid] > target) end = mid -1;
-            else start = mid + 1;
+            // 큰 수 중 가장 작은 값의 인덱스 구하기
+            if (arr[mid] == target) {
+                start = mid + 1;
+            } else if (arr[mid] < target) {
+                start = mid + 1;
+            } else if (arr[mid] > target) {
+                result = mid;
+                end = mid - 1;
+            }
         }
 
-        return end;
-    }
-
-    private static void pro() throws IOException {
-
-
+        return result;
     }
 
     public static void main(String[] args) throws Exception {
         init();
 
-        pro();
-
         bw.close();
     }
 }
-
