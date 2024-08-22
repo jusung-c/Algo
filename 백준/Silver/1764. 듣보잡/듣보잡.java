@@ -42,7 +42,7 @@ public class Main {
         int start = 0;
         int end = list.length - 1;
 
-        while (end >= start) {
+        while (end > start) {
             int mid = (start + end) / 2;
             String value = list[mid];
 
@@ -54,6 +54,7 @@ public class Main {
             }
         }
 
+        if (list[start].equals(target)) return true;
         return false;
     }
 
@@ -63,7 +64,7 @@ public class Main {
         bw.write(cnt + "\n");
 
         Collections.sort(answer);
-        
+
         for (String s : answer) {
             bw.write(s + "\n");
         }
