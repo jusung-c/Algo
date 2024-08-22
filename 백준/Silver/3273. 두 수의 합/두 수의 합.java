@@ -1,36 +1,55 @@
 import java.io.*;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
-    public static int func2(int[] arr, int N, int x) {
-        boolean[] cnt = new boolean[2000001];
-        int result = 0;
-        for(int i=0; i<N; i++) {
-            if (x-arr[i] >=1){
-                if (cnt[x - arr[i]] == true) {
-                    result++;
-                }
-                cnt[arr[i]] = true;
-            }
-        }
-        return result;
-    }
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
+    static StringTokenizer st;
+    static int N, x;
+    static int[] arr;
 
-        int N = Integer.parseInt(br.readLine());
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
 
-        int[] arr = new int[N];
-        StringTokenizer st = new StringTokenizer(br.readLine()," ");
+        N = Integer.parseInt(br.readLine());
+        arr = new int[N];
 
-        for(int i=0; i<N; i++) {
+        st = new StringTokenizer(br.readLine());
+
+        for (int i = 0; i < N; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        int x = Integer.parseInt(br.readLine());
+        x = Integer.parseInt(br.readLine());
+    }
 
-        bw.write(func2(arr, N, x)+" ");
+    private static void pro() throws IOException {
+        Arrays.sort(arr);
+
+        int start = 0;
+        int end = arr.length - 1;
+        int answer = 0;
+
+        while (end > start) {
+
+            if (arr[start] + arr[end] == x) {
+                start++;
+                answer++;
+            } else if (arr[start] + arr[end] > x) {
+                end--;
+            } else {
+                start++;
+            }
+        }
+
+        bw.write(answer + " ");
+    }
+
+    public static void main(String[] args) throws Exception {
+        init();
+
+        pro();
 
         bw.close();
     }
