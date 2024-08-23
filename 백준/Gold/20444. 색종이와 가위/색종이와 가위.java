@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -11,10 +12,10 @@ public class Main {
     public static void init() throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
 
-        st = new StringTokenizer(br.readLine(), " ");
-
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         K = Long.parseLong(st.nextToken());
+
     }
 
     private static void pro() throws IOException {
@@ -23,11 +24,12 @@ public class Main {
 
         while (start <= end) {
             int mid = (start + end) / 2;
+            long result = cal(mid);
 
-            if (paper(mid) == K) {
+            if (result == K) {
                 bw.write("YES");
                 return;
-            } else if (paper(mid) > K) {
+            } else if (result > K) {
                 end = mid - 1;
             } else {
                 start = mid + 1;
@@ -38,10 +40,11 @@ public class Main {
 
     }
 
-    private static long paper(int value) {
-        long a = value;
-        long b = N - value;
-        return (a + 1) * (b + 1);
+    private static long cal(int mid) {
+        long ka = mid;
+        long se = N - mid;
+
+        return (ka + 1) * (se + 1);
     }
 
     public static void main(String[] args) throws Exception {
