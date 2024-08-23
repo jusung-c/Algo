@@ -4,63 +4,85 @@ import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
+    static StringTokenizer st;
     static int N;
     static int[] list;
 
-    static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
+        list = new int[N];
 
-        list = new int[N + 1];
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= N; i++) {
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
             list[i] = Integer.parseInt(st.nextToken());
         }
+
+        Arrays.sort(list);
     }
 
-    static void pro() throws IOException {
-        // list 정렬
-        Arrays.sort(list, 1, N + 1);
+    private static void pro() throws IOException {
+        int A = 0;
+        int B = 0;
+        int sum = Integer.MAX_VALUE;
 
-        // 투 포인터
-        int L = 1;
-        int R = N;
-        int r1 = 0;
-        int r2 = 0;
-        int ans = Integer.MAX_VALUE;
+        for (int i = 0; i < N; i++) {
+            int target = list[i] * -1;
 
-        // L == R의 경우는 한 용액만 남는 경우임
-        while (L < R) {
-            int sum = list[L] + list[R];
 
-            // ans, r1, r2 갱신
-            if (Math.abs(sum) < ans) {
-                // 비교하기 쉽도록 절댓값으로 갱신
-                ans = Math.abs(sum);
-                r1 = list[L];
-                r2 = list[R];
+            // 후보지 2개
+            int indexA = binarySearch(i + 1, N - 1, target);
+            int indexB = indexA - 1;
+
+            // 각 후보들에 대해 범위 체크 후 최솟값 갱신
+            if (indexA > i && indexA < N) {
+                if (sum > Math.abs(list[i] + list[indexA])) {
+                    A = list[i];
+                    B = list[indexA];
+                    sum = Math.abs(list[i] + list[indexA]);
+                }
             }
 
-            // 최소와 최대를 더했을 때 0보다 큰 경우
-            if (sum > 0) {
-                R--;
+            if (indexB > i && indexB < N) {
+                if (sum > Math.abs(list[i] + list[indexB])) {
+                    A = list[i];
+                    B = list[indexB];
+                    sum = Math.abs(list[i] + list[indexB]);
+                }
+            }
 
-            // 최소와 최대를 더했을 때 0보다 작은 경우
-            } else {
-                L++;
+        }
+        bw.write(A + " " + B + " ");
+
+    }
+
+    private static int binarySearch(int start, int end, int target) {
+
+        int result = N;
+
+        while (start <= end) {
+            int mid = (start + end) / 2;
+
+            if (list[mid] == target) {
+                start = mid + 1;
+            } else if (list[mid] > target) {
+                end = mid - 1;
+                result = mid;
+            } else if (list[mid] < target) {
+                start = mid + 1;
             }
         }
 
-        bw.write(r1+" "+r2);
+        return result;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         init();
 
         pro();
 
         bw.close();
     }
-
 }
