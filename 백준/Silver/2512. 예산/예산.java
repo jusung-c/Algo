@@ -1,69 +1,69 @@
 import java.io.*;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
+    static StringTokenizer st;
     static int N, M;
-    static int[] plz;
+    static int max = Integer.MIN_VALUE;
+    static int[] list;
 
-    static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void init() throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
-        plz = new int[N + 1];
+        list = new int[N];
 
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= N; i++) {
-            plz[i] = Integer.parseInt(st.nextToken());
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            list[i] = Integer.parseInt(st.nextToken());
+            max = Math.max(max, list[i]);
         }
 
         M = Integer.parseInt(br.readLine());
     }
 
-    static void pro() throws IOException {
-        // 이분탐색
-        int L = 0;
-        int R = 0;
-        for (int i = 1; i <= N; i++) {
-            R = Math.max(plz[i], R);
+    private static boolean yesOrNo(int h) {
+        long sum = 0;
+
+        for (int i = 0; i < N; i++) {
+            if (list[i] >= h) sum += h;
+            else sum += list[i];
         }
 
-        int ans = 0;
+        return sum <= M;
+    }
 
-        while (L <= R) {
-            int mid = (L + R) / 2;
+    private static void pro() throws IOException {
+        int start = 0;
+        int end = 100_000;
+        int result = -1;
 
-            if (YesOrNo(mid) == true) {
-                ans = mid;
-                L = mid + 1;
+        while (start <= end) {
+            int mid = (start + end) / 2;
+
+            if (yesOrNo(mid)) {
+                result = mid;
+
+                start = mid + 1;
             } else {
-                R = mid - 1;
+                end = mid - 1;
             }
         }
 
-        bw.write(ans+" ");
+        result = Math.min(max, result);
+
+        bw.write(result + " ");
+
     }
 
-    static boolean YesOrNo(int H) {
-        int sum = 0;
-
-        for (int i = 1; i <= N; i++) {
-            sum += Math.min(H, plz[i]);
-        }
-
-        if (sum <= M) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         init();
 
         pro();
 
         bw.close();
     }
-
 }
