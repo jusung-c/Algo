@@ -1,55 +1,57 @@
 import java.io.*;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
     static StringTokenizer st;
     static int N, K;
-    static int[] arr;
+    static int max = Integer.MAX_VALUE;
+    static int[] size;
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        br = new BufferedReader(new InputStreamReader(System.in));
 
-        st = new StringTokenizer(br.readLine(), " ");
-
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        arr = new int[N + 1];
-
-        for (int i = 1; i <= N; i++) {
-            arr[i] = Integer.parseInt(br.readLine());
+        size = new int[N];
+        for (int i = 0; i < N; i++) {
+            size[i] = Integer.parseInt(br.readLine());
+            max = Math.max(max, size[i]);
         }
     }
 
-    private static boolean YesOrNo(long W) {
-        int sum = 0;
+    private static boolean yesOrNo(long h) {
+        long cnt = 0;
 
-        for (int i = 1; i <= N; i++) {
-            sum += arr[i] / W;
+        for (int i = 0; i < N; i++) {
+            cnt += size[i] / h;
         }
 
-        return sum >= K;
+        return cnt >= K;
     }
 
     private static void pro() throws IOException {
-        long start = 1;
-        long end = Arrays.stream(arr).max().getAsInt();
-        long result = 0;
+        long start = 0;
+        long end = max;
+        long result = -1;
 
         while (start <= end) {
             long mid = (start + end) / 2;
 
-            if (YesOrNo(mid)) {
-                result = mid;
+            if (yesOrNo(mid)) {
                 start = mid + 1;
+                result = mid;
             } else {
                 end = mid - 1;
             }
         }
 
-        bw.write(result+" ");
+        bw.write(result + " ");
 
     }
 
