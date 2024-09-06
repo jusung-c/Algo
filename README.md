@@ -1,2 +1,2 @@
-# BOJ
-This is a auto push repository for Baekjoon Online Judge created with [BaekjoonHub](https://github.com/BaekjoonHub/BaekjoonHub).
+
+## 문제 풀이 과정: https://github.com/jusung-c/Algo/discussions
