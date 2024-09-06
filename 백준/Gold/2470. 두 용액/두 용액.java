@@ -1,81 +1,62 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static BufferedReader br;
     static StringTokenizer st;
     static int N;
-    static int[] list;
+    static int[] liquid;
 
     public static void init() throws IOException {
-        br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
-        list = new int[N];
+        liquid = new int[N + 1];
 
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
-            list[i] = Integer.parseInt(st.nextToken());
+        st = new StringTokenizer(br.readLine(), " ");
+        for (int i = 1; i <= N; i++) {
+            liquid[i] = Integer.parseInt(st.nextToken());
         }
-
-        Arrays.sort(list);
     }
 
     private static void pro() throws IOException {
-        int A = 0;
-        int B = 0;
-        int sum = Integer.MAX_VALUE;
+        // 1. 용액 정렬
+        Arrays.sort(liquid, 1, N + 1);
 
-        for (int i = 0; i < N; i++) {
-            int target = list[i] * -1;
+        // 2. 투 포인터
+        int L = 1;  // 최소
+        int R = N;  // 최대
+        int r1 = 0;
+        int r2 = 0;
+        int ans = Integer.MAX_VALUE;
 
+        while (L < R) {
+            // 용액 혼합
+            int sum = liquid[L] + liquid[R];
+//            System.out.println(sum+" ");
 
-            // 후보지 2개
-            int indexA = binarySearch(i + 1, N - 1, target);
-            int indexB = indexA - 1;
-
-            // 각 후보들에 대해 범위 체크 후 최솟값 갱신
-            if (indexA > i && indexA < N) {
-                if (sum > Math.abs(list[i] + list[indexA])) {
-                    A = list[i];
-                    B = list[indexA];
-                    sum = Math.abs(list[i] + list[indexA]);
-                }
+            if (Math.abs(sum) < ans) {
+                r1 = liquid[L];
+                r2 = liquid[R];
+                ans = Math.abs(sum);
+//                System.out.println(result[0] + " " + result[1]);
             }
 
-            if (indexB > i && indexB < N) {
-                if (sum > Math.abs(list[i] + list[indexB])) {
-                    A = list[i];
-                    B = list[indexB];
-                    sum = Math.abs(list[i] + list[indexB]);
-                }
+            // 0보다 큰 경우
+            if (sum > 0) {
+                R--;
             }
 
-        }
-        bw.write(A + " " + B + " ");
-
-    }
-
-    private static int binarySearch(int start, int end, int target) {
-
-        int result = N;
-
-        while (start <= end) {
-            int mid = (start + end) / 2;
-
-            if (list[mid] == target) {
-                start = mid + 1;
-            } else if (list[mid] > target) {
-                end = mid - 1;
-                result = mid;
-            } else if (list[mid] < target) {
-                start = mid + 1;
+            // 0보다 작은 경우
+            else {
+                L++;
             }
         }
 
-        return result;
+        bw.write(r1 + " " + r2);
+
     }
 
     public static void main(String[] args) throws Exception {
