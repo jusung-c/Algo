@@ -4,45 +4,47 @@ import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
     static StringTokenizer st;
     static int N, M;
-    static int[] A;
+    static int[] arr;
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        br = new BufferedReader(new InputStreamReader(System.in));
 
-        st = new StringTokenizer(br.readLine(), " ");
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        A = new int[N + 1];
-        for (int i = 1; i <= N; i++) {
-            A[i] = Integer.parseInt(br.readLine());
+        arr = new int[N + 1];
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(br.readLine());
         }
     }
 
     private static void pro() throws IOException {
-        Arrays.sort(A, 1, N + 1);
+        // 1. 정렬
+        Arrays.sort(arr);
 
-        int R = 1;
-        int gap = 0;
-        int ans = Integer.MAX_VALUE;
+        // 2. 투 포인터로 두 포인터 값의 최소를 갱신해나가면서 전 범위 탐색하기
+        int r = 0;
+        int diff = 0;
+        int min = Integer.MAX_VALUE;
 
-        for (int L = 1; L <= N; L++) {
-            gap = A[R] - A[L];
+        for (int l = 1; l <= N; l++) {
+            diff = arr[r] - arr[l];
 
-            while (R < N && gap < M) {
-                R++;
-                gap = A[R] - A[L];
+            while (r + 1 <= N && diff < M) {
+                r++;
+                diff = arr[r] - arr[l];
             }
 
-            if (gap >= M) {
-                ans = Math.min(ans, gap);
-//                bw.write(ans+" ");
+            if (diff >= M) {
+                min = Math.min(min, diff);
             }
         }
 
-        bw.write(ans + " ");
+        bw.write(min + " ");
     }
 
     public static void main(String[] args) throws Exception {
