@@ -1,77 +1,68 @@
 import java.io.*;
+import java.util.Arrays;
 import java.util.StringTokenizer;
-
-/*
-    0. 문제
-
-    1. 아이디어
-
-    2. 시간 복잡도
-
- */
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static BufferedReader br;
     static StringTokenizer st;
     static int N, M;
-    static int[] A, B, result;
+    static int[] A, B;
 
     public static void init() throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
 
-        st = new StringTokenizer(br.readLine(), " ");
+        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
+        A = new int[N];
+        B = new int[M];
 
-        A = new int[N + 1];
-        B = new int[M + 1];
-        result = new int[N + M + 1];
-
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= N; i++) {
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
             A[i] = Integer.parseInt(st.nextToken());
         }
 
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= M; i++) {
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < M; i++) {
             B[i] = Integer.parseInt(st.nextToken());
         }
 
     }
 
     private static void pro() throws IOException {
-        int A_idx = 1;
-        int B_idx = 1;
-        int result_idx = 1;
+        int[] ans = new int[N + M];
+        int index = 0;
 
-        while (A_idx <= N && B_idx <= M) {
-            if (A[A_idx] <= B[B_idx]) {
-                result[result_idx] = A[A_idx];
-                A_idx++;
-                result_idx++;
+        int a_point = 0;
+        int b_point = 0;
+
+        while (a_point < N && b_point < M) {
+            if (A[a_point] < B[b_point]) {
+                ans[index] = A[a_point];
+                a_point++;
             } else {
-                result[result_idx] = B[B_idx];
-                B_idx++;
-                result_idx++;
+                ans[index] = B[b_point];
+                b_point++;
             }
+
+            index++;
         }
 
-        if (A_idx != N + 1) {
-            for (int i = A_idx; i <= N; i++) {
-                result[result_idx] = A[i];
-                result_idx++;
+        if (a_point == N) {
+            for (int i = b_point; i < M; i++) {
+                ans[index] = B[i];
+                index++;
             }
         } else {
-            for (int i = B_idx; i <= M; i++) {
-                result[result_idx] = B[i];
-                result_idx++;
+            for (int i = a_point; i < N; i++) {
+                ans[index] = A[i];
+                index++;
             }
         }
 
-
-        for (int i = 1; i <= result.length - 1; i++) {
-            bw.write(result[i] + " ");
+        for (int a : ans) {
+            bw.write(a + " ");
         }
 
     }
