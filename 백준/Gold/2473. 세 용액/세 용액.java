@@ -4,43 +4,43 @@ import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
     static StringTokenizer st;
-    static int N;
-    static int[] A;
+    static int N, A, B, C;
+    static int[] arr;
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
-        A = new int[N + 1];
-
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= N; i++) {
-            A[i] = Integer.parseInt(st.nextToken());
+        arr = new int[N];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
         }
     }
 
     private static void pro() throws IOException {
-        Arrays.sort(A, 1, N + 1);
+        Arrays.sort(arr);
 
         long ans = Long.MAX_VALUE;
-        int r1 = 0;
-        int r2 = 0;
-        int r3 = 0;
+        long A = 0;
+        long B = 0;
+        long C = 0;
 
-        for (int i = 1; i <= N - 2; i++) {
+        for (int i = 0; i < N - 2; i++) {
+            long target = arr[i];
             int L = i + 1;
-            int R = N;
+            int R = N - 1;
 
             while (L < R) {
-                long sum = (long) A[i] + (long) A[L] + (long) A[R];
-//                bw.write(sum+"\n");
+                long sum = target + arr[L] + arr[R];
 
                 if (Math.abs(sum) < ans) {
                     ans = Math.abs(sum);
-                    r1 = A[i];
-                    r2 = A[L];
-                    r3 = A[R];
+                    A = target;
+                    B = arr[L];
+                    C = arr[R];
                 }
 
                 if (sum > 0) {
@@ -51,8 +51,7 @@ public class Main {
             }
         }
 
-        bw.write(r1+" " + r2 + " " + r3);
-
+        bw.write(A + " " + B + " " + C + " ");
     }
 
     public static void main(String[] args) throws Exception {
