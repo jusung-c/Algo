@@ -1,59 +1,79 @@
 import java.io.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br;
     static StringTokenizer st;
     static int N;
-    static int[] A;
+    static int[] arr;
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+        br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        A = new int[N + 1];
-
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 1; i <= N; i++) {
-            A[i] = Integer.parseInt(st.nextToken());
+        arr = new int[N ];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
         }
     }
 
     private static void pro() throws IOException {
-        // 1. 배열 정렬
-        Arrays.sort(A, 1, N + 1);
-
         int ans = 0;
 
-        // 2. 타겟 결정
-        for (int i = 1; i <= N; i++) {
-            int target = A[i];
+        // 1. 내림차순 정렬
+        int[] reverse = Arrays.stream(arr)      // IntStream
+                .boxed()        // Stream<Integer>
+                .sorted(Collections.reverseOrder())     // Stream<Integer>
+                .mapToInt(Integer::intValue)            // IntStream
+                .toArray();// int[]
 
-            // 3. 투 포인터로 타겟이 되는 경우의 수 체크
-            int L = 1, R = N;
-            while (L < R) {
-                if (L == i) {
-                    L++;
-                } else if (R == i) {
-                    R--;
-                } else {
-                    if (A[L] + A[R] == target) {
-                        ans++;
-                        break;
-                    } else if (A[L] + A[R] > target) {
-                        R--;
-                    } else {
-                        L++;
-                    }
-                }
-            }
+        // 2. 좋은 수인지 판별
+        for (int i = 0; i < N; i++) {
+            int cand = reverse[i];
 
+            // 좋은 수이면 ans++
+            if (checkGood(i, cand, reverse)) ans++;
         }
 
         bw.write(ans + " ");
 
     }
+
+    private static boolean checkGood(int start, int target, int[] reverse) throws IOException {
+        int R = N - 1;
+        int sum = 0;
+
+        for (int L = 0; L < R; L++) {
+            if (start == L) continue;
+            if (start == R) R--;
+
+            sum = reverse[L] + reverse[R];
+
+            while (L < R - 1 && sum < target) {
+                R--;
+                if (R == start) continue;
+                sum = reverse[L] + reverse[R];
+            }
+
+//            bw.write("=== 기준: " + target + "===\n");
+
+            if (sum == target) {
+//                bw.write("!!!!reverse[L] = " + reverse[L] + " reverse[R] = " + reverse[R] + " sum = " + sum);
+//                bw.newLine();
+                return true;
+            } else {
+//                bw.write("@@@@reverse[L] = " + reverse[L] + " reverse[R] = " + reverse[R] + " sum = " + sum);
+//                bw.newLine();
+            }
+        }
+
+        return false;
+    }
+
+    // 3 2 1 0 -1
 
     public static void main(String[] args) throws Exception {
         init();
