@@ -18,27 +18,36 @@ public class Main {
     private static void pro() throws IOException {
         int R = -1;
         int[] cnt = new int[26];
-        int length = Integer.MIN_VALUE;
+        int kind = 0;
+        int length = 0;
 
         for (int L = 0; L < chars.length; L++) {
             if (L != 0) {
-                cnt[chars[L-1] - 'a']--;
+                cnt[chars[L - 1] - 'a']--;
+
+                if (cnt[chars[L - 1] - 'a'] == 0) {
+                    kind--;
+                }
             }
 
-            while (R + 1 < chars.length && checkValid(cnt)) {
+            while (R + 1 < chars.length && kind <= N) {
                 R++;
                 cnt[chars[R] - 'a']++;
+                if (cnt[chars[R] - 'a'] == 1) {
+                    kind++;
+                }
             }
 
-            if (!checkValid(cnt)) {
+            if (kind > N) {
                 cnt[chars[R] - 'a']--;
                 R--;
+                kind--;
             }
 
-//            bw.write("L = " + L + " R = " + R + " cnt = " + checkValid(cnt));
+//            bw.write("L = " + L + " R = " + R);
 //            bw.newLine();
 
-            if (checkValid(cnt)) {
+            if (kind <= N) {
                 length = Math.max(length, R - L + 1);
             }
         }
