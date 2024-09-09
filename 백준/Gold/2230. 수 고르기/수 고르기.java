@@ -17,26 +17,26 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
 
         arr = new int[N + 1];
-        for (int i = 0; i < N; i++) {
+        for (int i = 1; i <= N; i++) {
             arr[i] = Integer.parseInt(br.readLine());
         }
     }
 
     private static void pro() throws IOException {
-        // 1. 정렬
-        Arrays.sort(arr);
+        Arrays.sort(arr, 1, N + 1);
 
-        // 2. 투 포인터로 두 포인터 값의 최소를 갱신해나가면서 전 범위 탐색하기
-        int r = 0;
+        int R = 0;
         int diff = 0;
         int min = Integer.MAX_VALUE;
 
-        for (int l = 1; l <= N; l++) {
-            diff = arr[r] - arr[l];
+        for (int L = 1; L <= N; L++) {
+            if (R != 0) {
+                diff = arr[R] - arr[L];
+            }
 
-            while (r + 1 <= N && diff < M) {
-                r++;
-                diff = arr[r] - arr[l];
+            while (R + 1 <= N && diff < M) {
+                R++;
+                diff = arr[R] - arr[L];
             }
 
             if (diff >= M) {
@@ -45,6 +45,7 @@ public class Main {
         }
 
         bw.write(min + " ");
+
     }
 
     public static void main(String[] args) throws Exception {
