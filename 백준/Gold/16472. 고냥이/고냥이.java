@@ -1,5 +1,6 @@
 import java.io.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -17,9 +18,9 @@ public class Main {
 
     private static void pro() throws IOException {
         int R = -1;
-        int[] cnt = new int[26];
+        int[] cnt = new int[30];
         int kind = 0;
-        int length = 0;
+        int max = Integer.MIN_VALUE;
 
         for (int L = 0; L < chars.length; L++) {
             if (L != 0) {
@@ -33,9 +34,8 @@ public class Main {
             while (R + 1 < chars.length && kind <= N) {
                 R++;
                 cnt[chars[R] - 'a']++;
-                if (cnt[chars[R] - 'a'] == 1) {
-                    kind++;
-                }
+
+                if (cnt[chars[R] - 'a'] == 1) kind++;
             }
 
             if (kind > N) {
@@ -44,26 +44,17 @@ public class Main {
                 kind--;
             }
 
-//            bw.write("L = " + L + " R = " + R);
-//            bw.newLine();
+            if (max < R - L + 1) {
+//                bw.write("!!!! start= " + L + " end= " + R + " 길이 = " + (R - L + 1) + "\n");
+                max = Math.max(max, R - L + 1);
+            } else {
+//                bw.write("@@@@ start= " + L + " end= " + R + " 길이 = " + (R - L + 1) + "\n");
 
-            if (kind <= N) {
-                length = Math.max(length, R - L + 1);
             }
         }
 
-        bw.write(length + " ");
+        bw.write(max + " ");
 
-    }
-
-    private static boolean checkValid(int[] cnt) {
-        int val = 0;
-
-        for (int i = 0; i < cnt.length; i++) {
-            if (cnt[i] > 0) val++;
-        }
-
-        return val <= N;
     }
 
     public static void main(String[] args) throws Exception {
