@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -13,67 +12,46 @@ public class Main {
     public static void init() throws IOException {
         br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        arr = new int[N ];
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
+        arr = new int[N + 1];
+        for (int i = 1; i <= N; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
     }
 
     private static void pro() throws IOException {
-        int ans = 0;
+        Arrays.sort(arr, 1, N + 1);
 
-        // 1. 내림차순 정렬
-        int[] reverse = Arrays.stream(arr)      // IntStream
-                .boxed()        // Stream<Integer>
-                .sorted(Collections.reverseOrder())     // Stream<Integer>
-                .mapToInt(Integer::intValue)            // IntStream
-                .toArray();// int[]
+        int cnt = 0;
 
-        // 2. 좋은 수인지 판별
-        for (int i = 0; i < N; i++) {
-            int cand = reverse[i];
+        for (int target = 1; target <= N; target++) {
+            int R = N;
+            int sum = 0;
 
-            // 좋은 수이면 ans++
-            if (checkGood(i, cand, reverse)) ans++;
-        }
+            for (int L = 1; L <= N; L++) {
+                if (L == target) continue;
+                if (R == target) R--;
 
-        bw.write(ans + " ");
+                sum = arr[L] + arr[R];
 
-    }
+                while (R - 1 > L && sum > arr[target]) {
+                    R--;
+                    if (R == target) continue;
+                    sum = arr[L] + arr[R];
+                }
 
-    private static boolean checkGood(int start, int target, int[] reverse) throws IOException {
-        int R = N - 1;
-        int sum = 0;
-
-        for (int L = 0; L < R; L++) {
-            if (start == L) continue;
-            if (start == R) R--;
-
-            sum = reverse[L] + reverse[R];
-
-            while (L < R - 1 && sum < target) {
-                R--;
-                if (R == start) continue;
-                sum = reverse[L] + reverse[R];
-            }
-
-//            bw.write("=== 기준: " + target + "===\n");
-
-            if (sum == target) {
-//                bw.write("!!!!reverse[L] = " + reverse[L] + " reverse[R] = " + reverse[R] + " sum = " + sum);
-//                bw.newLine();
-                return true;
-            } else {
-//                bw.write("@@@@reverse[L] = " + reverse[L] + " reverse[R] = " + reverse[R] + " sum = " + sum);
-//                bw.newLine();
+                if (sum == arr[target]) {
+//                    bw.write(arr[L] + " " + arr[R] + " target: " + arr[target]);
+//                    bw.newLine();
+                    cnt++;
+                    break;
+                }
             }
         }
 
-        return false;
-    }
+        bw.write(cnt + " ");
 
-    // 3 2 1 0 -1
+    }
 
     public static void main(String[] args) throws Exception {
         init();
