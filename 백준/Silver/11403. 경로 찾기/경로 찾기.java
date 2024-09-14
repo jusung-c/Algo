@@ -8,10 +8,13 @@ public class Main {
     static int N;
     static ArrayList<Integer>[] adj;
     static boolean[] visit;
+    static int[][] ans;
 
     public static void init() throws IOException {
         N = Integer.parseInt(br.readLine());
         adj = new ArrayList[N + 1];
+        ans = new int[N + 1][N + 1];
+
         for (int i = 1; i <= N; i++) {
             adj[i] = new ArrayList<>();
         }
@@ -27,33 +30,33 @@ public class Main {
 
     private static void pro() throws IOException {
         for (int i = 1; i <= N; i++) {
+            visit = new boolean[N + 1];
+            bfs(i);
+        }
+
+        for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= N; j++) {
-                visit = new boolean[N + 1];
-                int result = isExistPath(i, j) ? 1 : 0;
-                bw.write(result + " ");
+                bw.write(ans[i][j] + " ");
             }
             bw.newLine();
         }
     }
 
-    private static boolean isExistPath(int i, int j) {
+    private static void bfs(int i) {
         Queue<Integer> que = new LinkedList<>();
         que.add(i);
-        visit[i] = true;
 
         while (!que.isEmpty()) {
-            i = que.poll();
+            int x = que.poll();
 
-            for (int y : adj[i]) {
-                if (y == j) return true;
+            for (int y : adj[x]) {
                 if (visit[y]) continue;
 
                 que.add(y);
                 visit[y] = true;
+                ans[i][y] = 1;
             }
         }
-
-        return false;
     }
 
     public static void main(String[] args) throws Exception {
