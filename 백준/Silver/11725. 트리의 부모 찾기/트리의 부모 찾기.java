@@ -1,32 +1,26 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
     static StringTokenizer st;
     static int N;
     static boolean[] visit;
+    static int[] answer;
     static ArrayList<Integer>[] adj;
-    static int[] ans;
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         N = Integer.parseInt(br.readLine());
-
-        visit = new boolean[N + 1];
-        ans = new int[N + 1];
-
         adj = new ArrayList[N + 1];
         for (int i = 1; i <= N; i++) {
             adj[i] = new ArrayList<>();
         }
+        visit = new boolean[N + 1];
+        answer = new int[N + 1];
 
         for (int i = 1; i < N; i++) {
-            st = new StringTokenizer(br.readLine(), " ");
+            st = new StringTokenizer(br.readLine());
             int x = Integer.parseInt(st.nextToken());
             int y = Integer.parseInt(st.nextToken());
 
@@ -34,34 +28,33 @@ public class Main {
             adj[y].add(x);
         }
 
+        bfs(1);
+    }
+
+    private static void bfs(int i) {
+        Queue<Integer> que = new LinkedList<>();
+        que.add(i);
+        visit[i] = true;
+
+        while (!que.isEmpty()) {
+            i = que.poll();
+
+            for (int y : adj[i]) {
+                if (visit[y]) continue;
+
+                answer[y] = i;
+                visit[y] = true;
+                que.add(y);
+            }
+        }
     }
 
     private static void pro() throws IOException {
-        bfs(1);
-
         for (int i = 2; i <= N; i++) {
-            bw.write(ans[i] + "\n");
+            bw.write(answer[i] + " ");
+            bw.newLine();
         }
-    }
 
-    private static void bfs(int start) {
-        Queue<Integer> que = new LinkedList<>();
-
-        que.add(start);
-        visit[start] = true;
-
-        while (!que.isEmpty()) {
-            int parent = que.poll();
-
-            for (int child : adj[parent]) {
-                if (visit[child]) continue;
-
-                que.add(child);
-                visit[child] = true;
-
-                ans[child] = parent;
-            }
-        }
     }
 
     public static void main(String[] args) throws Exception {
