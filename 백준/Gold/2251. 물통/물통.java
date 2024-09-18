@@ -79,8 +79,36 @@ public class Main {
         }
     }
 
+    private static void dfs(int a, int b, int c) {
+        visit[a][b][c] = true;
+
+        // A 물통이 비어있을 경우 C의 상태 기록!
+        if (a == 0) answer[c] = true;
+
+        State s = new State(a, b, c);
+
+        // 가능한 6가지의 경우 모두 탐색
+        for (int from = 0; from < 3; from++) {
+            for (int to = 0; to < 3; to++) {
+                // 같은 물통끼리는 제외
+                if (from == to) continue;
+
+                // 물 부어보기
+                State ns = s.pour(from, to);
+
+                // 이미 방문했던 상태면 제외
+                if (visit[ns.buckets[0]][ns.buckets[1]][ns.buckets[2]]) continue;
+
+                visit[ns.buckets[0]][ns.buckets[1]][ns.buckets[2]] = true;
+                dfs(ns.buckets[0], ns.buckets[1], ns.buckets[2]);
+            }
+        }
+    }
+
+
     private static void pro() throws IOException {
-        bfs(0, 0, maxList[2]);
+//        bfs(0, 0, maxList[2]);
+        dfs(0, 0, maxList[2]);
 
         for (int i = 0; i <= maxList[2]; i++) {
             if (answer[i]) bw.write(i + " ");
