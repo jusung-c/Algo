@@ -1,93 +1,90 @@
 import java.io.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
     static StringTokenizer st;
-    static int[] Limit;
+    static int[] maxList;
     static boolean[][][] visit;
-    static boolean[] possible;
-
+    static boolean[] answer;
     static class State {
-        int X[];
+        int[] buckets;
 
-        public State(int[] x) {
-            X = new int[3];
-
-            for (int i = 0; i < 3; i++) {
-                X[i] = x[i];
-            }
+        public State(int a, int b, int c) {
+            this.buckets = new int[3];
+            this.buckets[0] = a;
+            this.buckets[1] = b;
+            this.buckets[2] = c;
         }
 
-        // 물 붓기
-        public State move(int from, int to, int[] Limit) {
-            int nX[] = new int[] {X[0], X[1], X[2]};
+        public State(int[] buckets) {
+            this.buckets = buckets;
+        }
 
-            if (X[from] + X[to] >= Limit[to]) {
-                nX[from] = X[from] + X[to] - Limit[to];
-                nX[to] = Limit[to];
+        private State pour(int from, int to) {
+            int[] newBuckets = new int[]{buckets[0], buckets[1], buckets[2]};
+
+            if (buckets[from] + buckets[to] <= maxList[to]) {
+                newBuckets[from] = 0;
+                newBuckets[to] = buckets[from] + buckets[to];
             } else {
-                nX[from] = 0;
-                nX[to] = X[to] + X[from];
+                newBuckets[from] = buckets[from] + buckets[to] - maxList[to];
+                newBuckets[to] = maxList[to];
             }
 
-            return new State(nX);
+            return new State(newBuckets);
         }
     }
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         st = new StringTokenizer(br.readLine());
-
-        Limit = new int[3];
-
+        maxList = new int[3];
         for (int i = 0; i < 3; i++) {
-            Limit[i] = Integer.parseInt(st.nextToken());
+            maxList[i] = Integer.parseInt(st.nextToken());
         }
 
-        visit = new boolean[202][202][202];
-        possible = new boolean[202];
+        visit = new boolean[201][201][201];
+        answer = new boolean[201];
+    }
 
+    private static void bfs(int a, int b, int c) {
+        Queue<State> que = new LinkedList<>();
+        que.add(new State(a, b, c));
+
+        visit[a][b][c] = true;
+
+        while (!que.isEmpty()) {
+            State s = que.poll();
+
+            // A 물통이 비어있을 경우 C의 상태 기록!
+            if (s.buckets[0] == 0) answer[s.buckets[2]] = true;
+
+            // 가능한 6가지의 경우 모두 탐색
+            for (int from = 0; from < 3; from++) {
+                for (int to = 0; to < 3; to++) {
+                    // 같은 물통끼리는 제외
+                    if (from == to) continue;
+
+                    // 물 부어보기
+                    State ns = s.pour(from, to);
+
+                    // 이미 방문했던 상태면 제외
+                    if (visit[ns.buckets[0]][ns.buckets[1]][ns.buckets[2]]) continue;
+
+                    que.add(ns);
+                    visit[ns.buckets[0]][ns.buckets[1]][ns.buckets[2]] = true;
+                }
+            }
+        }
     }
 
     private static void pro() throws IOException {
-        bfs(0, 0, Limit[2]);
+        bfs(0, 0, maxList[2]);
 
-        for (int i = 0; i <= Limit[2]; i++) {
-            if (possible[i]) bw.write(i + " ");
+        for (int i = 0; i <= maxList[2]; i++) {
+            if (answer[i]) bw.write(i + " ");
         }
-    }
-
-    private static void bfs(int x1, int x2, int x3) {
-        Queue<State> Q = new LinkedList<>();
-
-        Q.add(new State(new int[]{x1, x2, x3}));
-        visit[x1][x2][x3] = true;
-
-        while (!Q.isEmpty()) {
-            State s = Q.poll();
-
-            if (s.X[0] == 0) possible[s.X[2]] = true;
-
-            for (int from = 0; from < 3; from++) {
-                for (int to = 0; to < 3; to++) {
-                    if (from == to) continue;
-
-                    State ns = s.move(from, to, Limit);
-
-                    if (visit[ns.X[0]][ns.X[1]][ns.X[2]]) continue;
-
-                    visit[ns.X[0]][ns.X[1]][ns.X[2]] = true;
-                    Q.add(ns);
-                }
-            }
-
-        }
-
-
     }
 
     public static void main(String[] args) throws Exception {
