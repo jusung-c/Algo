@@ -1,78 +1,65 @@
 import java.io.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
     static StringTokenizer st;
     static int T, N;
-    static int[][] dist;
-    static int[][] dir = new int[][]{
-            {-2, -1}, {-1, -2},
-            {1, 2}, {2, 1},
-            {-2, 1}, {-1, 2},
-            {1, -2}, {2, -1}
-    };
+    static int[][] map, dist;
+    static int[][] dir = new int[][]{{-2, 1}, {-2, -1}, {-1, 2}, {-1, -2},
+            {1, 2}, {1, -2}, {2, 1}, {2, -1}};
+    static class Point {
+        int x, y;
 
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         T = Integer.parseInt(br.readLine());
-
         for (int t = 0; t < T; t++) {
             N = Integer.parseInt(br.readLine());
-            dist = new int[N][N];
 
-            // dist 초기화
+            st = new StringTokenizer(br.readLine());
+            Point start = new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+
+            st = new StringTokenizer(br.readLine());
+            Point end = new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+
+            map = new int[N][N];
+            dist = new int[N][N];
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
                     dist[i][j] = -1;
                 }
             }
 
-            // 시작점
-            st = new StringTokenizer(br.readLine(), " ");
-            int sx = Integer.parseInt(st.nextToken());
-            int sy = Integer.parseInt(st.nextToken());
-
-            // 목적지
-            st = new StringTokenizer(br.readLine(), " ");
-            int ex = Integer.parseInt(st.nextToken());
-            int ey = Integer.parseInt(st.nextToken());
-
-            bfs(sx, sy);
-
-            bw.write(dist[ex][ey] + " \n");
+            bfs(start, end);
+            bw.write(dist[end.x][end.y] + " ");
+            bw.newLine();
         }
-
     }
 
-    private static void bfs(int a, int b) {
-        Queue<Integer> Q = new LinkedList<>();
+    private static void bfs(Point start, Point end) throws IOException {
+        Queue<Point> que = new LinkedList<>();
+        que.add(start);
+        dist[start.x][start.y] = 0;
 
-        dist[a][b] = 0;
-        Q.add(a);
-        Q.add(b);
+        while (!que.isEmpty()) {
+            Point p = que.poll();
 
-        while (!Q.isEmpty()) {
-            int x = Q.poll();
-            int y = Q.poll();
+            for (int d = 0; d < 8; d++) {
+                int nx = p.x + dir[d][0];
+                int ny = p.y + dir[d][1];
 
-            for (int k = 0; k < 8; k++) {
-                int nx = x + dir[k][0];
-                int ny = y + dir[k][1];
-
-                // 체스판 벗어나면 예외 처리
                 if (nx < 0 || ny < 0 || nx >= N || ny >= N) continue;
-
-                // 이미 다녀간 곳이면 예외 처리
                 if (dist[nx][ny] != -1) continue;
 
-                Q.add(nx);
-                Q.add(ny);
-                dist[nx][ny] = dist[x][y] + 1;
+                que.add(new Point(nx, ny));
+                dist[nx][ny] = dist[p.x][p.y] + 1;
             }
         }
     }
