@@ -1,71 +1,62 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
     static StringTokenizer st;
     static int N, M;
-    static int[] dist;
     static ArrayList<Integer>[] adj;
+    static int[] dist;
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         N = Integer.parseInt(br.readLine());
         M = Integer.parseInt(br.readLine());
 
-        dist = new int[N + 1];
         adj = new ArrayList[N + 1];
         for (int i = 1; i <= N; i++) {
             adj[i] = new ArrayList<>();
         }
 
-        for (int i = 1; i <= M; i++) {
-            st = new StringTokenizer(br.readLine(), " ");
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
+        dist = new int[N + 1];
+        for (int i = 1; i <= N; i++) {
+            dist[i] = -1;
+        }
 
-            adj[a].add(b);
-            adj[b].add(a);
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int x = Integer.parseInt(st.nextToken());
+            int y = Integer.parseInt(st.nextToken());
+
+            adj[x].add(y);
+            adj[y].add(x);
         }
     }
 
     private static void pro() throws IOException {
         bfs(1);
 
-        int ans = 0;
-        for (int i = 2; i <= N; i++) {
-            if (dist[i] > 0 && dist[i] <= 2) {
-                ans++;
-            }
+        int sum = 0;
+        for (int i = 1; i <= N; i++) {
+            if (dist[i] > 0 && dist[i] <= 2) sum++;
         }
 
-        bw.write(ans + " ");
+        bw.write(sum + " ");
     }
 
-    private static void bfs(int a) {
-        for (int i = 1; i <= N; i++) {
-            dist[i] = -1;
-        }
+    private static void bfs(int x) {
+        Queue<Integer> que = new LinkedList<>();
+        que.add(x);
+        dist[x] = 0;
 
-        Queue<Integer> Q = new LinkedList<>();
+        while (!que.isEmpty()) {
+            x = que.poll();
 
-        Q.add(a);
-        dist[a] = 0;
+            for (int y : adj[x]) {
+                if (dist[y] != -1) continue;
 
-        while (!Q.isEmpty()) {
-            int x = Q.poll();
-
-            for (int i = 0; i < adj[x].size(); i++) {
-                int nx = adj[x].get(i);
-
-                if (dist[nx] != -1) continue;
-
-                Q.add(nx);
-                dist[nx] = dist[x] + 1;
+                que.add(y);
+                dist[y] = dist[x] + 1;
             }
         }
     }
