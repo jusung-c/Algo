@@ -1,124 +1,113 @@
-/*
-1. 아이디어
-- 3중 for문을 돌면서 익은 토마토 큐에 넣고 동시에 BFS 돌리기
-- BFS를 실행하면서 거리++
-- 3중 for문 마지막으로 돌면서 다 안익었으면 -1, 다 익었으면 최댓값 출력
-
-2. 시간복잡도
-V: 10^6
-E: 4*V
-O(V+E) = O(5V) = O(5*10^6) < 1초
-
-3. 자료구조
-방문 기록 : bool[][][] visited
-지도 : int[][][] map
-큐(BFS) - Point
-
-*/
-
 import java.io.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
+    static StringTokenizer st;
+    static int R, C, H;
+    static int[][][] map, day;
+    static int[][] dir = new int[][]{{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
+    static class Point {
+        int h, r, c;
 
-    static int N, M, H, max;
-    static int[][][] map;
-    static Queue<Point> q = new LinkedList<>();
-    static boolean[][][] visited;
+        public Point(int h, int r, int c) {
+            this.h = h;
+            this.r = r;
+            this.c = c;
+        }
+    }
 
-    static int[] dh = {0, 0, 0, 0, 1, -1};
-    static int[] dx = {0, 0, 1, -1, 0, 0};
-    static int[] dy = {1, -1, 0, 0, 0, 0};
+    public static void init() throws IOException {
+        st = new StringTokenizer(br.readLine());
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
-
-        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
-        M = Integer.parseInt(st.nextToken());
-        N = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        R = Integer.parseInt(st.nextToken());
         H = Integer.parseInt(st.nextToken());
 
-        map = new int[H][N][M];
-
+        map = new int[H][R][C];
         for (int h = 0; h < H; h++) {
-            for (int n = 0; n < N; n++) {
-                st = new StringTokenizer(br.readLine()," ");
-                for (int m = 0; m < M; m++) {
-                    map[h][n][m] = Integer.parseInt(st.nextToken());
+            for (int r = 0; r < R; r++) {
+                st = new StringTokenizer(br.readLine());
+                for (int c = 0; c < C; c++) {
+                    map[h][r][c] = Integer.parseInt(st.nextToken());
                 }
             }
         }
 
-        BFS();
-
+        day = new int[H][R][C];
         for (int h = 0; h < H; h++) {
-            for (int n = 0; n < N; n++) {
-                for (int m = 0; m < M; m++) {
-                    if (max < map[h][n][m]) {
-                        max = map[h][n][m];
-                    }
-                    if (map[h][n][m] == 0) {
-                        System.out.println("-1" + " ");
+            for (int r = 0; r < R; r++) {
+                for (int c = 0; c < C; c++) {
+                    day[h][r][c] = -1;
+                }
+            }
+        }
+    }
+
+    private static void pro() throws IOException {
+        // 익은 토마토들을 대상으로 BFS 진행
+        bfs();
+
+        int ans = -1;
+
+        // 그게 아니라면 day의 최댓값을 출력
+        for (int h = 0; h < H; h++) {
+            for (int r = 0; r < R; r++) {
+                for (int c = 0; c < C; c++) {
+                    // 안 익은 토마토에 해당하는 day가 -1이 있을 경우 -1 출력
+                    if (map[h][r][c] == 0 && day[h][r][c] == -1) {
+                        bw.write("-1");
                         return;
                     }
+
+                    ans = Math.max(ans, day[h][r][c]);
                 }
             }
         }
 
-        bw.write((max-1) + " ");
-
-        bw.close();
+        bw.write(ans + " ");
     }
 
-    static void BFS() {
-        visited = new boolean[H][N][M];
+    private static void bfs() {
+        Queue<Point> que = new LinkedList<>();
 
         for (int h = 0; h < H; h++) {
-            for (int n = 0; n < N; n++) {
-                for (int m = 0; m < M; m++) {
-                    if (map[h][n][m] == 1) {
-                        q.add(new Point(h, n, m));
-                        visited[h][n][m] = true;
+            for (int r = 0; r < R; r++) {
+                for (int c = 0; c < C; c++) {
+                    if (map[h][r][c] == 1) {
+                        que.add(new Point(h, r, c));
+                        day[h][r][c] = 0;
                     }
                 }
             }
         }
 
-        while (!q.isEmpty()) {
-            Point curr = q.poll();
+        while (!que.isEmpty()) {
+            Point p = que.poll();
 
-            for (int k = 0; k < 6; k++) {
-                int n_h = curr.h + dh[k];
-                int n_x = curr.x + dx[k];
-                int n_y = curr.y + dy[k];
+            for (int d = 0; d < 6; d++) {
+                int nh = p.h + dir[d][0];
+                int nr = p.r + dir[d][1];
+                int nc = p.c + dir[d][2];
 
-                if (n_h < 0 || n_h >= H || n_x < 0 || n_x >= N || n_y < 0 || n_y >= M) {
-                    continue;
-                }
+                if (nh < 0 || nr < 0 || nc < 0 ||
+                    nh >= H || nr >= R || nc >= C) continue;
 
-                if (!visited[n_h][n_x][n_y] && map[n_h][n_x][n_y] == 0) {
-                    q.add(new Point(n_h, n_x, n_y));
-                    visited[n_h][n_x][n_y] = true;
-                    map[n_h][n_x][n_y] = map[curr.h][curr.x][curr.y] + 1;
-                }
+                if (map[nh][nr][nc] != 0) continue;
+                if (day[nh][nr][nc] != -1) continue;
+
+                que.add(new Point(nh, nr, nc));
+                day[nh][nr][nc] = day[p.h][p.r][p.c] + 1;
             }
-
         }
-
-
     }
 
-    static class Point {
-        int h, x, y;
+    public static void main(String[] args) throws Exception {
+        init();
 
-        public Point(int h, int x, int y) {
-            this.h = h;
-            this.x = x;
-            this.y = y;
-        }
+        pro();
+
+        bw.close();
     }
 }
