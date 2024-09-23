@@ -4,57 +4,62 @@ import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
     static StringTokenizer st;
     static int N;
-    static int[][] childs;
+    static int[][] list;
+    static StringBuilder sb = new StringBuilder();
 
     public static void init() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         N = Integer.parseInt(br.readLine());
-        childs = new int[30][2];
+        list = new int[27][2];
 
         for (int i = 0; i < N; i++) {
-            st = new StringTokenizer(br.readLine());
-            char curCh = st.nextToken().charAt(0);
-            int cur = curCh - 'A';
+            st = new StringTokenizer(br.readLine(), " ");
+            int node = st.nextToken().charAt(0) - 'A';
 
             for (int k = 0; k < 2; k++) {
-                char ch = st.nextToken().charAt(0);
-                if (ch != '.') childs[cur][k] = ch - 'A';
-                else childs[cur][k] = -1;
+                char child = st.nextToken().charAt(0);
+
+                if (child != '.') list[node][k] = child - 'A';
+                else list[node][k] = -1;
             }
         }
     }
 
     private static void pro() throws IOException {
-        pre_order(0);
-        bw.write("\n");
-        in_order(0);
-        bw.write("\n");
-        post_order(0);
+        // 1. 전위 순회
+        frontDfs(0);
+        bw.newLine();
 
+        // 2. 중위 순회
+        midDfs(0);
+        bw.newLine();
+
+        // 3.후위 순회
+        backDfs(0);
+        bw.newLine();
     }
 
-    private static void post_order(int x) throws IOException {
-        if (x == -1) return;
-        post_order(childs[x][0]);
-        post_order(childs[x][1]);
-        bw.write((char)(x + 'A'));
+    private static void backDfs(int node) throws IOException {
+        if (node == -1) return;
+        backDfs(list[node][0]);
+        backDfs(list[node][1]);
+        bw.write((char) node + 'A');
     }
 
-    private static void in_order(int x) throws IOException {
-        if (x == -1) return;
-        in_order(childs[x][0]);
-        bw.write((char)(x + 'A'));
-        in_order(childs[x][1]);
+    private static void midDfs(int node) throws IOException {
+        if (node == -1) return;
+        midDfs(list[node][0]);
+        bw.write((char) node + 'A');
+        midDfs(list[node][1]);
     }
 
-    private static void pre_order(int x) throws IOException {
-        if (x == -1) return;
-        bw.write((char)(x + 'A'));
-        pre_order(childs[x][0]);
-        pre_order(childs[x][1]);
+    private static void frontDfs(int node) throws IOException {
+        if (node == -1) return;
+        bw.write((char) node + 'A');
+        frontDfs(list[node][0]);
+        frontDfs(list[node][1]);
     }
 
     public static void main(String[] args) throws Exception {
