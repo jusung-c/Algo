@@ -2,20 +2,16 @@ import java.util.stream.*;
 
 class Solution {
     public int[] solution(long n) {
-        // 1. 정수 -> 문자열
-        String str = String.valueOf(n);
         
-        // 2. 문자열 뒤집기
-        String reversed = new StringBuilder(str).reverse().toString();
+        // 1. 문자열로 변환한 뒤 순서를 뒤집어서 char 배열로 만들기
+        char[] answer = new StringBuilder(Long.toString(n))
+                .reverse()
+                .toString()
+                .toCharArray();
         
-        // 3. 뒤집힌 문자열을 배열로 변환
-        char[] arr = reversed.toCharArray();
-        
-        // 4. 배열의 각 문자를 정수로 변환
-        int[] answer = IntStream.range(0, arr.length)
-            .map(i -> arr[i] - '0')
-            .toArray();
-        
-        return answer;
+        // 2. 배열의 각 문자를 정수로 변환해서 제출
+        return IntStream.range(0, answer.length)   // IntStream
+            .map(i -> answer[i] - '0')      // IntStream
+            .toArray();                     // int[]
     }
 }
