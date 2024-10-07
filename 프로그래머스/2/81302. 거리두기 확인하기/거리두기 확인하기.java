@@ -1,92 +1,80 @@
 class Solution {
-    int[] dx = {0, 0, 1, -1};
-    int[] dy = {1, -1, 0, 0};
-
+    // 상, 하, 좌, 우
+    static int[][] dir = new int[][] {
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1}
+    };
+    
     public int[] solution(String[][] places) {
         int[] answer = new int[places.length];
-
-        // 1. 각 대기실별로 반복해 거리두기를 지킨 대기실인지 판단
-        for (int r = 0; r < places.length; r++) {
-
-            // 2. 주어진 대기실 정보를 char[][]로 변환
-            char[][] room = new char[places.length][places[r].length];
-
-            for (int i = 0; i <places[r].length; i++) {
-                room[i] = places[r][i].toCharArray();
+    
+        for (int room=0; room<5; room++) {
+            String[] place = places[room];
+            answer[room] = 1;
+            
+            // 1. 문자열로 주어진 대기실을 이차원 배열로 변환
+            char[][] map = new char[place.length][];
+            for (int r=0; r<place.length; r++) {
+                map[r] = place[r].toCharArray();
             }
-
-            // 3. 모든 좌석을 돌면서 사람일 경우 거리두기 체크
-            answer[r] = checkRoom(room) ? 1:0;
+            
+            // 2. 응시자들이 거리두기를 잘 지켰는지 검증한다.
+            answer[room] = isOk(map) ? 1 : 0;
         }
-
+        
         return answer;
     }
-
-    private boolean checkRoom(char[][] room) {
-        for (int y = 0; y < room.length; y++) {
-            for (int x = 0; x < room[y].length; x++) {
-                // 사람일 경우 체크 시작
-                if (room[y][x] == 'P') {
-//                    System.out.println("y = " + y + " x = " + x);
-
-                    if(!checkRoom(room, y, x)) return false;
-                }
+    
+    public boolean isOk(char[][] map) {
+        for (int r=0; r<map.length; r++) {
+            for (int c=0; c<map[r].length; c++) {
+                // 응시자들만 체크
+                if (map[r][c] != 'P') continue;
+                
+                // 거리두기를 지켰는지 체크 (한명이라도 어길 시 바로 false)
+                if (!isOk(map, r, c)) return false;
             }
         }
-
+        
         return true;
     }
-
-    private boolean checkRoom(char[][] room, int y, int x) {
-//        System.out.println("호출!");
-        for (int d = 0; d < 4; d++) {
-            int nx = x + dx[d];
-            int ny = y + dy[d];
-
-            // room의 범위를 벗어나는 경우 무시
-            if (ny < 0 || ny >= room.length ||
-                    nx < 0 || nx >= room.length) continue;
-
-            switch (room[ny][nx]) {
-                case 'P': return false;
-                case 'X': break;
-                case 'O':
-                    if (isNext(room, ny, nx)) return false;
-                    break;
+    
+    public boolean isOk(char[][] map, int r, int c) {
+        for (int d=0; d<4; d++) {
+            // 상하좌우 방향으로 체크
+            int nr = r + dir[d][0];
+            int nc = c + dir[d][1];
+            
+            if (nr < 0 || nc < 0 || nr >=5 || nc >= 5) continue;
+            if (map[nr][nc] == 'P') return false;
+            if (map[nr][nc] == 'X') continue;
+            
+            // 해당 방향에서 다시 상하좌우 체크. 단, 이전 방향을 제외
+            if (!check(map, nr, nc, d)) return false;
+        }
+        
+        return true;
+    }
+    
+    public boolean check(char[][] map, int r, int c, int prev) {
+        for (int d=0; d<4; d++) {
+            int execlude = -1;
+            
+            switch (prev) {
+                case 0: execlude = 1; break;
+                case 1: execlude = 0; break;
+                case 2: execlude = 3; break;
+                case 3: execlude = 2; break;
             }
+            
+            if (d == execlude) continue;
+            
+            int nr = r + dir[d][0];
+            int nc = c + dir[d][1];
+            
+            if (nr < 0 || nc < 0 || nr >= 5 || nc >= 5) continue;
+            if (map[nr][nc] == 'P') return false;
         }
-
+        
         return true;
-    }
-
-    private boolean isNext(char[][] room, int y, int x) {
-        int cnt = 0;
-
-        for (int d = 0; d < 4; d++) {
-            int nx = x + dx[d];
-            int ny = y + dy[d];
-
-            // room의 범위를 벗어나는 경우 무시
-            if (ny < 0 || ny >= room.length ||
-                    nx < 0 || nx >= room.length) continue;
-
-            if (room[ny][nx] == 'P') cnt++;
-        }
-
-        return cnt > 1;
-    }
-
-
-    public static void main(String[] args) {
-        String[][] places = {
-                {"POOOP", "OXXOX", "OPXPX", "OOXOX", "POXXP"},
-                {"POOPX", "OXPXP", "PXXXO", "OXXXO", "OOOPP"},
-                {"PXOPX", "OXOXP", "OXPOX", "OXXOP", "PXPOX"},
-                {"OOOXX", "XOOOX", "OOOXX", "OXOOX", "OOOOO"},
-                {"PXPXP", "XPXPX", "PXPXP", "XPXPX", "PXPXP"}
-        };
-
-        Solution solution = new Solution();
-        solution.solution(places);
     }
 }
