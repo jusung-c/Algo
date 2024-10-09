@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
@@ -19,12 +18,12 @@ public class Main {
             this.weight = weight;
         }
     }
-    static class Node {
-        int v, d;
+    static class Info {
+        int idx, dist;
 
-        public Node(int v, int d) {
-            this.v = v;
-            this.d = d;
+        public Info(int idx, int dist) {
+            this.idx = idx;
+            this.dist = dist;
         }
     }
 
@@ -64,31 +63,28 @@ public class Main {
         // dist 배열 초기화 및 시작점 큐에 넣기
         for (int i=1; i<=N; i++) {
             if (i == start) dist[i] = 0;
-            dist[i] = Integer.MAX_VALUE;
+            else dist[i] = Integer.MAX_VALUE;
         }
 
-        PriorityQueue<Node> que = new PriorityQueue<>((o1, o2) -> o1.d - o2.d);
-        que.add(new Node(start, 0));
+        PriorityQueue<Info> que = new PriorityQueue<>((o1, o2) -> o1.dist - o2.dist);
+        que.add(new Info(start, 0));
 
         // 큐가 빌 때까지 반복
         while (!que.isEmpty()) {
             // 가장 d가 작은 노드 추출
-            Node node = que.poll();
+            Info info = que.poll();
 
             // 가치가 있는지 판단
-            if (dist[node.v] < node.d) continue;
-
-            // 가치가 있는 경우 최단 거리 갱신
-            dist[node.v] = node.d;
+            if (dist[info.idx] < info.dist) continue;
 
             // 연결된 간선들 확인
-            for (Edge e : edges[node.v]) {
+            for (Edge e : edges[info.idx]) {
                 // 간선의 정보가 가치가 있는지 판단
-                if (dist[node.v] + e.weight >= dist[e.to]) continue;
+                if (dist[info.idx] + e.weight >= dist[e.to]) continue;
 
                 // 최단거리 갱신 후 큐에 넣기
-                dist[e.to] = dist[node.v] + e.weight;
-                que.add(new Node(e.to, dist[e.to]));
+                dist[e.to] = dist[info.idx] + e.weight;
+                que.add(new Info(e.to, dist[e.to]));
             }
         }
     }
