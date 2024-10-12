@@ -1,70 +1,43 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static BufferedReader br;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
     static StringTokenizer st;
     static int N, M;
     static int[] A, B;
 
     public static void init() throws IOException {
-        br = new BufferedReader(new InputStreamReader(System.in));
-
         st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         A = new int[N];
         B = new int[M];
-
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
-            A[i] = Integer.parseInt(st.nextToken());
-        }
-
+        for (int i = 0; i < N; i++) A[i] = Integer.parseInt(st.nextToken());
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < M; i++) {
-            B[i] = Integer.parseInt(st.nextToken());
-        }
-
+        for (int i = 0; i < M; i++) B[i] = Integer.parseInt(st.nextToken());
     }
 
     private static void pro() throws IOException {
-        int[] ans = new int[N + M];
+        int aIndex = 0;
+        int bIndex = 0;
         int index = 0;
+        int[] answer = new int[N + M];
 
-        int a_point = 0;
-        int b_point = 0;
+        while (true) {
+            if (aIndex == N || bIndex == M) break;
 
-        while (a_point < N && b_point < M) {
-            if (A[a_point] < B[b_point]) {
-                ans[index] = A[a_point];
-                a_point++;
-            } else {
-                ans[index] = B[b_point];
-                b_point++;
-            }
-
-            index++;
+            if (A[aIndex] <= B[bIndex]) answer[index++] = A[aIndex++];
+            else answer[index++] = B[bIndex++];
         }
 
-        if (a_point == N) {
-            for (int i = b_point; i < M; i++) {
-                ans[index] = B[i];
-                index++;
-            }
-        } else {
-            for (int i = a_point; i < N; i++) {
-                ans[index] = A[i];
-                index++;
-            }
-        }
-
-        for (int a : ans) {
-            bw.write(a + " ");
-        }
-
+        if (aIndex == N) for (int i=bIndex; i<M; i++) answer[index++] = B[i];
+        if (bIndex == M) for (int i=aIndex; i<N; i++) answer[index++] = A[i];
+        for (int i : answer) bw.write(i + " ");
     }
 
     public static void main(String[] args) throws Exception {
