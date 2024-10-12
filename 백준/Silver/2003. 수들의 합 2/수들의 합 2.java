@@ -1,48 +1,38 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static BufferedReader br;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));;
     static StringTokenizer st;
-    static int N, M;
+    static int arrSize, target;
     static int[] arr;
 
     public static void init() throws IOException {
-        br = new BufferedReader(new InputStreamReader(System.in));
-
         st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-
-        arr = new int[N + 1];
+        arrSize = Integer.parseInt(st.nextToken());
+        target = Integer.parseInt(st.nextToken());
+        arr = new int[arrSize];
         st = new StringTokenizer(br.readLine());
-        for (int i = 1; i <= N; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-        }
+        for (int i = 0; i < arrSize; i++) arr[i] = Integer.parseInt(st.nextToken());
     }
 
     private static void pro() throws IOException {
-        int r = 0;
-        int sum = 0;
-        int ans = 0;
+        int sum = 0, result = 0;
 
-        for (int l = 1; l <= N; l++) {
-            sum -= arr[l - 1];
+        for (int R = -1, L = 0; L < arrSize; L++) {
+            if (L != 0) sum -= arr[L - 1];
 
-            while (r + 1 <= N && sum < M) {
-                r++;
-                sum += arr[r];
+            while (R + 1 < arrSize && sum < target) {
+                sum += arr[++R];
             }
 
-            if (sum == M) {
-                ans++;
-            }
+            if (sum == target) result++;
         }
 
-        bw.write(ans + " ");
-
+        bw.write(result + " ");
     }
 
     public static void main(String[] args) throws Exception {
