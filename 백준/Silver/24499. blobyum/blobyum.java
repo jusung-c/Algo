@@ -25,28 +25,35 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        arr = new int[N];
+        arr = new int[N*2];
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) arr[i] = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+            arr[i + N] = arr[i];
+        }
     }
 
     private static void pro() throws IOException {
         // K size를 유지하면서 합의 값을 구하고 최댓값을 갱신한다.
         int sum = 0;
-
-        // K size 초기값
-        for (int i = 0; i < K; i++) {
-            sum += arr[i];
-        }
-        
-        int max = sum;
+        int size = 0;
+        int max = Integer.MIN_VALUE;
 
         // 한 바퀴 돌면서 합을 구하고, 최댓값 갱신
-        for (int L = 1, R = K - 1; L < N; L++) {
+        for (int L = 0, R = -1; L < 2 * N; L++) {
             // sum 갱신
-            sum -= arr[L - 1];
-            R = (R + 1) % N;
-            sum += arr[R];
+            if (L != 0) {
+                sum -= arr[L - 1];
+                size--;
+            }
+
+            while (R + 1 < 2 * N && size < K) {
+                sum += arr[++R];
+                size++;
+            }
+
+//            bw.write("L = " + L + " R = " + R + " sum = " + sum + " size = " + size);
+//            bw.newLine();
 
             // 최댓값 갱신
             max = Math.max(max, sum);
