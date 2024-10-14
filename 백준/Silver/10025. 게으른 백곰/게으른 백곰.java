@@ -7,7 +7,7 @@ public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     ;
     static StringTokenizer st;
-    static int N, dist;
+    static int N, dist, max, maxIndex;
     static int[] arr;
 
     public static void init() throws IOException {
@@ -23,34 +23,40 @@ public class Main {
         dist = Integer.parseInt(st.nextToken()) * 2 + 1;
         arr = new int[1000001];
 
+        maxIndex = -1;
+
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             int target = Integer.parseInt(st.nextToken());
             int x = Integer.parseInt(st.nextToken());
             arr[x] = target;
+
+            maxIndex = Math.max(maxIndex, x);
         }
     }
 
     private static void pro() throws IOException {
         int sum = 0;
         int size = 0;
-        int max = 0;
+        int answer = 0;
 
-        for (int R = -1, L = 0; L < 1000001; L++) {
+//        System.out.println(maxIndex + " ");
+
+        for (int R = -1, L = 0; L <= maxIndex; L++) {
             if (L != 0) {
                 sum -= arr[L - 1];
                 size--;
             }
 
-            while (R + 1 < 1000001 && size < dist) {
+            while (R + 1 <= maxIndex && size < dist) {
                 sum += arr[++R];
                 size++;
             }
 
-            max = Math.max(max, sum);
+            answer = Math.max(answer, sum);
         }
 
-        bw.write(max + " ");
+        bw.write(answer + " ");
     }
 
     public static void main(String[] args) throws Exception {
