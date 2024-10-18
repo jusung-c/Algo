@@ -1,35 +1,33 @@
 import java.util.*;
 
 class Solution {
-    static String[] words = new String[] {"A", "E", "I", "O", "U"};
-    static ArrayList<String> dict = new ArrayList<>();
-    static String answer;
+    static String[] alpha = new String[] {"A", "E", "I", "O", "U"};
+    static ArrayList<String> dict;
     
-    public void makeDict(StringBuilder maked) {
-        dict.add(maked.toString());
+    public void makeWord(String prev) {
+        // 현재까지 완성한 단어를 사전에 추가
+        dict.add(prev);
         
-        // 5자리 다 채워졌으면 추가하고 탈출
-        if (maked.length() == 5) return;
+        // 5글자까지 다 완성하면 탈출
+        if (prev.length() == 5) return;
         
-        // 현재 단어에서 추가로 A, E, I, O, U 하나씩 붙여서 단어 만들기
-        for (String s : words) {
-            maked.append(s);
-            makeDict(maked);
-            maked.deleteCharAt(maked.length() - 1);
+        // 다음 글자 붙이기
+        for (int i=0; i<5; i++) {
+            makeWord(prev + alpha[i]);
         }
     }
     
     public int solution(String word) {
-        // 'A', 'E', 'I', 'O', 'U' 만을 사용한 길이 5 이하의 단어
-        // 사전 순서: "A" "AA" ... "AAAAA" "AAAAE" ... "AAAAU" "AAAE" ... "UUUUU"
+        dict = new ArrayList<>();
         
-        // 5개 문자 중 5개를 중복있이 순서있지 나열하는 경우다.
-        // 기껏해야 5*5*5*5*5니까 모든 경우의 수를 다 탐색해도 된다.
+        // 'A', 'E', 'I', 'O', 'U'로 사전 완성하기
+        // 사전은 A AA AAA AAAA AAAAA AAAAE ... AAAE AAAEA AAAEE ... UUUUU
         
-        // 1. 사전 완성하기
-        makeDict(new StringBuilder());
+        // DFS로 하나씩 붙여가면서 만들어보기
+        makeWord("");
         
-        // 2. 해당하는 단어 인덱스 반환
+        // for (String s : dict) System.out.println(s);
+        
         return dict.indexOf(word);
     }
 }
