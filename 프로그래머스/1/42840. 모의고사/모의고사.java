@@ -1,37 +1,28 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.IntStream;
+import java.util.*;
 
 class Solution {
+    static int[][] pattern = new int[][] {
+        {1, 2, 3, 4, 5},
+        {2, 1, 2, 3, 2, 4, 2, 5},
+        {3, 3, 1, 1, 2, 2, 4, 4, 5, 5}
+    };
+    
     public int[] solution(int[] answers) {
-        // 1. 각 수포자들의 패턴 정의
-        int[][] pattern = new int[][]{
-                {1, 2, 3, 4, 5},
-                {2, 1, 2, 3, 2, 4, 2, 5},
-                {3, 3, 1, 1, 2, 2, 4, 4, 5, 5}
-        };
-
-        int[] cnt = new int[3];
-
-        // 2. 모든 답을 돌면서 각 수포자들이 답을 맞췄는지 확인
-        for (int i = 0; i < answers.length; i++) {
-            int answer = answers[i];
-
-            for (int j = 0; j < pattern.length; j++) {
-                if (answer == pattern[j][i % pattern[j].length]) cnt[j]++;
-            }
+        // 정답을 찍는 3개의 패턴이 있을 때 주어진 답지와 비교해 가장 많이 맞춘 사람을 고르자
+        int[] result = new int[3];
+        
+        // 채점 결과
+        for (int index=0; index<answers.length; index++) {
+            for (int i=0; i<3; i++)
+                if (answers[index] == pattern[i][index % pattern[i].length]) 
+                    result[i]++;
         }
-
-
-        // 3. 가장 많은 답을 맞춘 수포자를 배열에 담아 반환
-        List<Integer> answer = new ArrayList<>();
-
-        int max = Arrays.stream(cnt).max().getAsInt();
-        for (int i = 0; i < cnt.length; i++) {
-            if(cnt[i] == max) answer.add(i + 1);
-        }
-
+        
+        ArrayList<Integer> answer = new ArrayList<>();
+        int max = Integer.MIN_VALUE;
+        for (int i=0; i<3; i++) max = Math.max(max, result[i]);
+        for (int i=0; i<3; i++) if (result[i] == max) answer.add(i+1);
+        
         return answer.stream().mapToInt(i -> i).toArray();
     }
 }
