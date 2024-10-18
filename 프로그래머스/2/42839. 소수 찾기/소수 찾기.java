@@ -1,53 +1,53 @@
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 class Solution {
-    public int solution(String numbers) {
-        int[] nums = numbers.chars()
-                .map(c -> c - '0')
-                .toArray();
-
-        boolean[] isUsed = new boolean[numbers.length()];
-
-        Set<Integer> primes = new HashSet<>();
-
-        // 1. 주어진 종이 조각의 수로 만들 수 있는 모든 조합 구하기
-
-        // 재귀로 모든 조합을 구해야 한다.
-        // 상태: 지금까지 만든 숫자를 acc, 남은 숫자들을 numbers라고 할 때 (acc, numbers)
-        // 종료 조건: 모든 숫자를 다 사용해서 더 이상 남은 숫자가 없는 경우. (acc, 0)
-        // 재귀: (acc*10+n, numbers-n)
-
-        getPrimes(0, nums, isUsed, primes);
-
-        return primes.size();
-    }
-
-    // 재귀 호출
-    private void getPrimes(int acc, int[] numbers, boolean[] isUsed, Set<Integer> primes) {
-        // 소수인지 판단
-        if (isPrime(acc)) primes.add(acc);
-
-        // 숫자 이어 붙이기
-        for (int i = 0; i < numbers.length; i++) {
-            if (isUsed[i]) continue;
-
-            int nextAcc = acc * 10 + numbers[i];
-            isUsed[i] = true;
-
-            getPrimes(nextAcc, numbers, isUsed, primes);
-
-            isUsed[i] = false;
-        }
-    }
-
-    private boolean isPrime(int n) {
-        if (n <= 1) return false;
-
-        for (int i = 2; i * i <= n; i++) {
-            if (n % i == 0) return false;
-        }
-
+    static Set<Integer> answer;
+    static boolean[] visit;
+    
+    public boolean isPrime(int num) {
+        if (num <= 1) return false;
+        
+        for (int i=2; i<num; i++)
+            if (num % i == 0) return false;
+        
         return true;
+    }
+    
+    public boolean isFinish() {
+        for (boolean b : visit) 
+            if (!b) return false;
+        return true;
+    }
+    
+    public void getNum(int num, int[] input) {
+        // 소수인지 판별
+        if (isPrime(num)) answer.add(num);
+        
+        // 종이 조각을 다 사용했으면 탈출
+        if (isFinish()) return;
+        
+        // 다음 경우의 수
+        for (int i=0; i<input.length; i++) {
+            if (visit[i]) continue;
+            
+            int next = num * 10 + input[i];
+            visit[i] = true;
+            getNum(next, input);
+            visit[i] = false;
+        }
+    }
+    
+    public int solution(String numbers) {
+        answer = new HashSet<>();
+        visit = new boolean[numbers.length()];
+        
+        // 1. 숫자 조각으로 분리
+        int[] nums = numbers.chars().map(c -> c - '0').toArray();
+        // for (int i : nums) System.out.println(i);
+        
+        // 2. 모든 조합의 숫자를 만들면서 소수인지 판별하기
+        getNum(0, nums);
+        
+        return answer.size();
     }
 }
