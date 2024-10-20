@@ -19,31 +19,30 @@ class Solution {
     
     public int solution(int[] priorities, int location) {
         Deque<Task> que = new ArrayDeque<>();
-        ArrayList<Task> orders = new ArrayList<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        
+        int answer = 0;
         
         // 1. 작업을 큐와 순서도에 넣기
         for (int i=0; i<priorities.length; i++) {
             Task t = new Task(i, priorities[i]);
             que.addLast(t);
+            pq.add(priorities[i]);
         }
         
         // 2. 큐에서 작업을 하나씩 꺼내면서 조건 확인
         while(!que.isEmpty()) {
             Task t = que.poll();
             
-            if (checkOrder(t, que)) orders.add(t);
+            if (t.order == pq.peek()) {
+                answer++;
+                pq.poll();
+                
+                if (location == t.num) return answer;
+            }
             else que.addLast(t);
         }
         
-        int answer = -1;
-        
-        for (int i=0; i<orders.size(); i++) {
-            if(orders.get(i).num == location) {
-                answer = i;
-                break;
-            }
-        }
-        
-        return answer + 1;
+        return -1;
     }
 }
