@@ -1,38 +1,26 @@
 import java.util.*;
 
 class Solution {
-    static int[] selected;
-    static int cnt;
+    int[] selected;
+    int cnt;
     
-    public int cal(int[] selected, int[] numbers) {
-        int result = 0;
-
-        for (int i=0; i<selected.length; i++) {
-            
-            switch (selected[i]) {
-                case 1:
-                    result += numbers[i];
-                    break;
-                case 2:
-                    result -= numbers[i];
-                    break;
-            }
-        }
-        
-        return result;
+    public int cal(int num, int op) {
+        return op == 1 ? num : (-1)*num;
     }
     
-    public void dfs(int k, int[] numbers, int target) {
+    public void dfs(int k, int sum, int[] numbers, int target) {
         // 2. 연산자를 다 고른 경우 적용해 target이 되는지 확인
         if (k == numbers.length) {
-            if (target == cal(selected, numbers)) cnt++;
+            if (target == sum) cnt++;
             return;
         }
         
         for (int i=1; i<=2; i++) {
             selected[k] = i;
-            dfs(k+1, numbers, target);
+            sum += cal(numbers[k], i);
+            dfs(k+1, sum, numbers, target);
             selected[k] = 0;
+            sum -= cal(numbers[k], i);
         }
     }
         
@@ -41,7 +29,7 @@ class Solution {
         cnt = 0;
         
         // 1. 4종류의 연산자를 중복을 허용해서 순서있게 N개를 뽑아서 나열
-        dfs(0, numbers, target);
+        dfs(0, 0, numbers, target);
         
         return cnt;
     }
